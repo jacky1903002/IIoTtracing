@@ -262,6 +262,7 @@
                             <option value="C3磨床">C3磨床</option>
                             <option value="D1複材">D1複材</option>
                             <option value="D4矽加工">D4矽加工</option>
+                            <option value="D3車床">D3車床</option>
                         </select>
                     </div>
                     <div class="text-xs text-gray-500 font-normal">
@@ -369,11 +370,11 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // 下拉選單規範選項
+        // 下拉選單規範選項 (新增 D3車床)
         const DEPARTMENTS = [
             "A1金一", "B1石墨", "C1金二", "C1金三", 
             "D3金三", "D1金二", "D1金三", "C3線切割", 
-            "C1磨床", "C3磨床", "D1複材", "D4矽加工"
+            "C1磨床", "C3磨床", "D1複材", "D4矽加工", "D3車床"
         ];
 
         // 全局資料快照
@@ -400,7 +401,7 @@
                     } else if (data && typeof data === 'object') {
                         window.currentData = Object.values(data);
                     } else {
-                        // 預設給予 12 筆課別預設資料
+                        // 預設給予 13 筆課別預設資料
                         window.currentData = DEPARTMENTS.map((dept, idx) => createEmptyRow(idx + 1, dept));
                         saveAllDataToFirebase();
                     }
@@ -669,8 +670,8 @@
             } else if (tab === 'chart') {
                 dataView.classList.add('hidden');
                 chartView.classList.remove('hidden');
-                btnChart.classList.add('active');
-                btnData.classList.remove('active');
+                btnData.classList.add('active');
+                btnChart.classList.remove('active');
                 renderCharts();
             }
         };
