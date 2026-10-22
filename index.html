@@ -268,7 +268,7 @@
                             <option value="B1石墨">B1石墨</option>
                             <option value="C1金二">C1金二</option>
                             <option value="C1金三">C1金三</option>
-                            <option value="D3金三">D3金三</option>
+                            <option value="D3金二">D3金二</option>
                             <option value="D1金二">D1金二</option>
                             <option value="D1金三">D1金三</option>
                             <option value="C3線切割">C3線切割</option>
@@ -384,10 +384,10 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // 下拉選單規範選項 (包含 D3車床 共 13 個)
+        // 下拉選單規範選項 (已將 D3金三 改為 D3金二)
         const DEPARTMENTS = [
             "A1金一", "B1石墨", "C1金二", "C1金三", 
-            "D3金三", "D1金二", "D1金三", "C3線切割", 
+            "D3金二", "D1金二", "D1金三", "C3線切割", 
             "C1磨床", "C3磨床", "D1複材", "D4矽加工", "D3車床"
         ];
 
@@ -558,11 +558,9 @@
                     e.preventDefault();
                     tr.classList.remove('drag-over');
                     if (draggedRowIndex !== null && draggedRowIndex !== index) {
-                        // 重新排列陣列中的元素
                         const movedItem = window.currentData.splice(draggedRowIndex, 1)[0];
                         window.currentData.splice(index, 0, movedItem);
 
-                        // 重新賦予 ID 編號
                         window.currentData.forEach((r, i) => r.id = i + 1);
 
                         renderTable();
@@ -853,7 +851,7 @@
                             getRate(totalIiotD, totalIiotT),
                             getRate(totalNetD, totalNetT),
                             getRate(totalWifiD, totalWifiT),
-                            getRate(totalTabD, totalTabT)
+                            getRate(totalTabT, totalTabD)
                         ],
                         backgroundColor: ['#38BDF8', '#0284C7', '#10B981', '#06B6D4', '#8B5CF6'],
                         borderWidth: 1,
