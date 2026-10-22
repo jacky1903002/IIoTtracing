@@ -74,6 +74,20 @@
             background-color: #F0F9FF;
             border-color: #0284C7;
         }
+        /* Drag and Drop styling */
+        tr.dragging {
+            opacity: 0.5;
+            background-color: #E0F2FE !important;
+        }
+        tr.drag-over {
+            border-top: 3px solid #0284C7 !important;
+        }
+        .drag-handle {
+            cursor: grab;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -202,7 +216,7 @@
                             <i class="fa-solid fa-plus mr-1"></i>新增列
                         </button>
                         <span class="text-xs font-normal bg-sky-50 text-sky-800 border border-sky-300 px-3 py-1.5 rounded-lg">
-                            <i class="fa-solid fa-bolt mr-1"></i>資料異動自動同步儲存
+                            <i class="fa-solid fa-grip-vertical mr-1"></i>按住圖示可拖曳調整順序 (自動儲存)
                         </span>
                     </div>
                 </div>
@@ -212,7 +226,7 @@
                     <table class="w-full text-left border-collapse text-sm min-w-[1500px]">
                         <thead>
                             <tr class="bg-creamDark border-b border-black text-gray-800 font-medium text-center text-xs">
-                                <th class="p-2 border-r border-gray-300 w-12">操作</th>
+                                <th class="p-2 border-r border-gray-300 w-16">排序/操作</th>
                                 <th class="p-2 border-r border-gray-300 w-14">編號</th>
                                 <th class="p-2 border-r border-gray-300 w-32">課別</th>
                                 <th class="p-2 border-r border-gray-300 w-20 bg-sky-50">機台總數</th>
@@ -370,7 +384,7 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // 下拉選單規範選項 (新增 D3車床)
+        // 下拉選單規範選項 (包含 D3車床 共 13 個)
         const DEPARTMENTS = [
             "A1金一", "B1石墨", "C1金二", "C1金三", 
             "D3金三", "D1金二", "D1金三", "C3線切割", 
@@ -382,6 +396,7 @@
         window.deptChartInstance = null;
         window.overallChartInstance = null;
         let isInitialLoad = true;
+        let draggedRowIndex = null;
 
         // AUTH 狀態監聽
         onAuthStateChanged(auth, (user) => {
@@ -479,7 +494,7 @@
             };
         }
 
-        // 渲染表格
+        // 渲染表格 (支援 Drag & Drop 拖曳搬移)
         window.renderTable = function() {
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = '';
@@ -511,19 +526,65 @@
                 const tabletProgress = calcProgress(tabletDone, tabletTotal);
 
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-gray-200 hover:bg-sky-50/50 text-center text-xs font-normal";
+                tr.className = "border-b border-gray-200 hover:bg-sky-50/50 text-center text-xs font-normal transition-colors";
+                tr.setAttribute('draggable', 'true');
+                tr.dataset.index = index;
+
+                // 綁定拖曳 Event Listener
+                tr.addEventListener('dragstart', (e) => {
+                    draggedRowIndex = index;
+                    tr.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                tr.addEventListener('dragend', () => {
+                    tr.classList.remove('dragging');
+                    document.querySelectorAll('#dataTableBody tr').forEach(r => r.classList.remove('drag-over'));
+                });
+
+                tr.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (draggedRowIndex !== index) {
+                        tr.classList.add('drag-over');
+                    }
+                });
+
+                tr.addEventListener('dragleave', () => {
+                    tr.classList.remove('drag-over');
+                });
+
+                tr.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    tr.classList.remove('drag-over');
+                    if (draggedRowIndex !== null && draggedRowIndex !== index) {
+                        // 重新排列陣列中的元素
+                        const movedItem = window.currentData.splice(draggedRowIndex, 1)[0];
+                        window.currentData.splice(index, 0, movedItem);
+
+                        // 重新賦予 ID 編號
+                        window.currentData.forEach((r, i) => r.id = i + 1);
+
+                        renderTable();
+                        renderCharts();
+                        saveAllDataToFirebase();
+                    }
+                });
 
                 const deptOptions = DEPARTMENTS.map(d => 
                     `<option value="${d}" ${row.department === d ? 'selected' : ''}>${d}</option>`
                 ).join('');
 
                 tr.innerHTML = `
-                    <td class="p-1 border-r border-gray-200">
-                        <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 p-1">
+                    <td class="p-1 border-r border-gray-200 flex items-center justify-center space-x-1">
+                        <span class="drag-handle text-gray-400 hover:text-gray-700 px-1 py-0.5" title="按住拖曳排序">
+                            <i class="fa-solid fa-grip-vertical"></i>
+                        </span>
+                        <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 p-0.5" title="刪除本列">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
-                    <td class="p-1 border-r border-gray-200">${index + 1}</td>
+                    <td class="p-1 border-r border-gray-200 font-medium text-gray-700">${index + 1}</td>
                     <td class="p-1 border-r border-gray-200">
                         <select onchange="updateRowValue(${index}, 'department', this.value)" class="table-input font-normal bg-cream">
                             ${deptOptions}
@@ -533,7 +594,7 @@
                         <input type="number" min="0" value="${machineTotal}" onchange="updateRowValue(${index}, 'machineTotal', this.value)" class="table-input text-right">
                     </td>
                     
-                    <!-- 三色燈 (淡藍系) -->
+                    <!-- 三色燈 -->
                     <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${signalTotal}" onchange="updateRowValue(${index}, 'signalTotal', this.value)" class="table-input text-right">
                     </td>
