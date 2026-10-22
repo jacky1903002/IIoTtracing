@@ -15,7 +15,7 @@
     <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -24,8 +24,8 @@
                     colors: {
                         cream: '#FBF9F5',
                         creamDark: '#F3EFE6',
-                        brandAccent: '#0066FF',     /* 改為亮藍色作為主色 */
-                        brandSecondary: '#0088FF',
+                        brandAccent: '#0284C7',     /* 藍天藍/淡藍配色 */
+                        brandSecondary: '#38BDF8',
                         brandGreen: '#10B981',
                         brandPurple: '#8B5CF6'
                     },
@@ -39,40 +39,40 @@
     <style>
         body {
             background-color: #FBF9F5;
-            color: #000000;
-            font-weight: 700;
+            color: #1F2937;
+            font-weight: 400;
             font-family: 'Noto Sans TC', sans-serif;
         }
         * {
-            border-color: #000000;
+            border-color: #E5E7EB;
         }
-        .btn-bold {
-            font-weight: 800;
-            box-shadow: 3px 3px 0px #000000;
+        .btn-custom {
+            font-weight: 500;
+            box-shadow: 2px 2px 0px #000000;
             transition: all 0.1s ease;
         }
-        .btn-bold:active {
-            transform: translate(2px, 2px);
+        .btn-custom:active {
+            transform: translate(1px, 1px);
             box-shadow: 1px 1px 0px #000000;
         }
-        .card-bold {
-            border: 2px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
+        .card-custom {
+            border: 1.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
             background-color: #FFFFFF;
         }
         .table-input {
             width: 100%;
             padding: 4px 8px;
-            font-weight: 800;
-            color: #000000;
+            font-weight: 400;
+            color: #1F2937;
             background-color: #FFFFFF;
-            border: 1.5px solid #000000;
+            border: 1px solid #D1D5DB;
             border-radius: 4px;
             outline: none;
         }
         .table-input:focus {
-            background-color: #E6F0FF;
-            border-color: #0066FF;
+            background-color: #F0F9FF;
+            border-color: #0284C7;
         }
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -83,22 +83,22 @@
             background: #F3EFE6;
         }
         ::-webkit-scrollbar-thumb {
-            background: #000000;
+            background: #9CA3AF;
             border-radius: 4px;
         }
         .tab-btn {
-            border: 2px solid #000000;
-            font-weight: 800;
+            border: 1.5px solid #000000;
+            font-weight: 500;
             transition: all 0.15s ease;
         }
         .tab-btn.active {
-            background-color: #0066FF;
+            background-color: #0284C7;
             color: #FFFFFF;
-            box-shadow: 3px 3px 0px #000000;
+            box-shadow: 2px 2px 0px #000000;
         }
         .tab-btn:not(.active) {
             background-color: #FFFFFF;
-            color: #000000;
+            color: #1F2937;
         }
         .tab-btn:not(.active):hover {
             background-color: #F3EFE6;
@@ -108,26 +108,26 @@
 <body class="min-h-screen pb-12">
 
     <!-- 登入 Modal (無登入禁止使用) -->
-    <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="card-bold p-8 max-w-md w-full rounded-xl relative">
+    <div id="loginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="card-custom p-8 max-w-md w-full rounded-xl relative">
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-brandAccent text-white rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+                <div class="w-16 h-16 bg-sky-600 text-white rounded-full flex items-center justify-center mx-auto mb-3 border border-black shadow-[2px_2px_0px_#000]">
                     <i class="fa-solid fa-network-wired text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-black text-black">機聯網專案追蹤系統</h2>
-                <p class="text-sm text-black font-bold mt-1">請登入 Firebase 帳號以獲取系統存取權限</p>
+                <h2 class="text-2xl font-bold text-gray-900">機聯網專案追蹤系統</h2>
+                <p class="text-sm text-gray-600 font-normal mt-1">請登入 Firebase 帳號以獲取系統存取權限</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-black font-black mb-1 text-sm">電子郵件帳號 (Email)</label>
-                    <input type="email" id="loginEmail" required class="w-full p-2.5 border-2 border-black rounded-lg font-bold outline-none focus:bg-blue-50" placeholder="user@company.com">
+                    <label class="block text-gray-700 font-medium mb-1 text-sm">電子郵件帳號 (Email)</label>
+                    <input type="email" id="loginEmail" required class="w-full p-2.5 border border-gray-300 rounded-lg font-normal outline-none focus:bg-sky-50 focus:border-sky-500" placeholder="user@company.com">
                 </div>
                 <div>
-                    <label class="block text-black font-black mb-1 text-sm">密碼 (Password)</label>
-                    <input type="password" id="loginPassword" required class="w-full p-2.5 border-2 border-black rounded-lg font-bold outline-none focus:bg-blue-50" placeholder="••••••••">
+                    <label class="block text-gray-700 font-medium mb-1 text-sm">密碼 (Password)</label>
+                    <input type="password" id="loginPassword" required class="w-full p-2.5 border border-gray-300 rounded-lg font-normal outline-none focus:bg-sky-50 focus:border-sky-500" placeholder="••••••••">
                 </div>
-                <div id="loginError" class="text-red-600 font-black text-sm hidden bg-red-100 p-2 border border-red-500 rounded"></div>
-                <button type="submit" id="btnLogin" class="w-full bg-brandAccent hover:bg-blue-700 text-white font-black py-3 rounded-lg btn-bold text-lg border-2 border-black">
+                <div id="loginError" class="text-red-600 font-medium text-sm hidden bg-red-100 p-2 border border-red-400 rounded"></div>
+                <button type="submit" id="btnLogin" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-3 rounded-lg btn-custom text-base border border-black">
                     <i class="fa-solid fa-right-to-bracket mr-2"></i>登入系統
                 </button>
             </form>
@@ -135,19 +135,19 @@
     </div>
 
     <!-- 頂部 Navbar -->
-    <header class="bg-white border-b-4 border-black sticky top-0 z-30 shadow-md">
+    <header class="bg-white border-b-2 border-black sticky top-0 z-30 shadow-sm">
         <div class="max-w-[1700px] mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-brandAccent text-white p-2.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000]">
+                <div class="bg-sky-600 text-white p-2.5 rounded-lg border border-black shadow-[2px_2px_0px_#000]">
                     <i class="fa-solid fa-industry text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black text-black tracking-tight">機聯網專案進度追蹤</h1>
-                    <div class="flex items-center space-x-3 text-xs font-black mt-0.5">
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">機聯網專案進度追蹤</h1>
+                    <div class="flex items-center space-x-3 text-xs font-normal mt-0.5">
                         <span id="connectionStatus" class="inline-flex items-center text-red-600 bg-red-100 px-2 py-0.5 rounded border border-black">
-                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5 animate-pulse"></span>已離線 / 未連線
+                            <span class="w-2 h-2 rounded-full bg-red-500 mr-1.5 animate-pulse"></span>已離線 / 未連線
                         </span>
-                        <span class="text-black bg-creamDark px-2 py-0.5 rounded border border-black">
+                        <span class="text-gray-700 bg-creamDark px-2 py-0.5 rounded border border-black">
                             上次自動儲存：<span id="lastSavedTime">未儲存</span>
                         </span>
                     </div>
@@ -156,21 +156,21 @@
 
             <!-- 功能按鈕區 -->
             <div class="flex items-center flex-wrap gap-2">
-                <button onclick="exportToExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg btn-custom border border-black text-sm flex items-center">
                     <i class="fa-solid fa-file-excel mr-1.5"></i>匯出 Excel
                 </button>
-                <label class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center cursor-pointer">
+                <label class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg btn-custom border border-black text-sm flex items-center cursor-pointer">
                     <i class="fa-solid fa-file-import mr-1.5"></i>匯入 Excel
                     <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
                 </label>
-                <button onclick="exportToPNG()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                <button onclick="exportToPNG()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg btn-custom border border-black text-sm flex items-center">
                     <i class="fa-solid fa-file-image mr-1.5"></i>匯出 PNG
                 </button>
-                <div class="h-6 w-0.5 bg-black mx-1 hidden sm:block"></div>
-                <div id="userInfo" class="hidden items-center space-x-2 bg-creamDark px-3 py-1.5 rounded-lg border-2 border-black">
-                    <i class="fa-solid fa-user-circle text-lg text-black"></i>
-                    <span id="userEmailDisplay" class="text-xs font-black text-black"></span>
-                    <button onclick="handleLogout()" class="text-xs bg-red-500 text-white font-black px-2 py-1 rounded border border-black ml-1 hover:bg-red-600">登出</button>
+                <div class="h-6 w-0.5 bg-gray-300 mx-1 hidden sm:block"></div>
+                <div id="userInfo" class="hidden items-center space-x-2 bg-creamDark px-3 py-1.5 rounded-lg border border-black">
+                    <i class="fa-solid fa-user-circle text-lg text-gray-700"></i>
+                    <span id="userEmailDisplay" class="text-xs font-medium text-gray-800"></span>
+                    <button onclick="handleLogout()" class="text-xs bg-red-500 text-white font-normal px-2 py-1 rounded border border-black ml-1 hover:bg-red-600">登出</button>
                 </div>
             </div>
         </div>
@@ -179,10 +179,10 @@
     <!-- 分頁導覽頁籤 (Tab Navigation) -->
     <main class="max-w-[1700px] mx-auto px-4 mt-6">
         <div class="flex border-b-2 border-black mb-6 space-x-2">
-            <button id="tabBtnData" onclick="switchTab('data')" class="tab-btn active px-6 py-2.5 rounded-t-lg text-base flex items-center">
+            <button id="tabBtnData" onclick="switchTab('data')" class="tab-btn active px-6 py-2 rounded-t-lg text-base flex items-center">
                 <i class="fa-solid fa-table-list mr-2"></i>📋 數據管理列表
             </button>
-            <button id="tabBtnChart" onclick="switchTab('chart')" class="tab-btn px-6 py-2.5 rounded-t-lg text-base flex items-center">
+            <button id="tabBtnChart" onclick="switchTab('chart')" class="tab-btn px-6 py-2 rounded-t-lg text-base flex items-center">
                 <i class="fa-solid fa-chart-pie mr-2"></i>📊 統計圖表分析
             </button>
         </div>
@@ -192,46 +192,46 @@
             
             <!-- 分頁 1：數據表格管理區 -->
             <section id="tabDataView" class="space-y-4">
-                <div class="card-bold p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
+                <div class="card-custom p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
                     <div class="flex items-center space-x-2">
-                        <span class="bg-black text-white px-3 py-1 rounded font-black text-sm">工作表</span>
-                        <h2 class="text-xl font-black text-black">機聯網進度追蹤</h2>
+                        <span class="bg-gray-800 text-white px-3 py-0.5 rounded text-sm font-medium">工作表</span>
+                        <h2 class="text-xl font-bold text-gray-900">機聯網進度追蹤</h2>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="addNewRow()" class="bg-sky-300 hover:bg-sky-400 text-black px-3 py-1.5 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                        <button onclick="addNewRow()" class="bg-sky-200 hover:bg-sky-300 text-sky-900 px-3 py-1.5 rounded-lg btn-custom border border-black text-sm flex items-center">
                             <i class="fa-solid fa-plus mr-1"></i>新增列
                         </button>
-                        <span class="text-xs font-black bg-blue-100 text-blue-900 border border-black px-3 py-1.5 rounded-lg">
-                            <i class="fa-solid fa-bolt mr-1"></i>變更時自動同步儲存
+                        <span class="text-xs font-normal bg-sky-50 text-sky-800 border border-sky-300 px-3 py-1.5 rounded-lg">
+                            <i class="fa-solid fa-bolt mr-1"></i>資料異動自動同步儲存
                         </span>
                     </div>
                 </div>
 
                 <!-- 表格容器 -->
-                <div class="card-bold rounded-xl overflow-x-auto shadow-lg bg-white">
+                <div class="card-custom rounded-xl overflow-x-auto shadow-sm bg-white">
                     <table class="w-full text-left border-collapse text-sm min-w-[1500px]">
                         <thead>
-                            <tr class="bg-creamDark border-b-2 border-black text-black font-black text-center text-xs">
-                                <th class="p-2 border-r border-black w-12">操作</th>
-                                <th class="p-2 border-r border-black w-14">編號</th>
-                                <th class="p-2 border-r border-black w-32">課別</th>
-                                <th class="p-2 border-r border-black w-20 bg-sky-100">機台總數</th>
-                                <th class="p-2 border-r border-black w-24">三色燈總數</th>
-                                <th class="p-2 border-r border-black w-24">三色燈完成數</th>
-                                <th class="p-2 border-r border-black w-28 bg-sky-50">三色燈模組進度</th>
-                                <th class="p-2 border-r border-black w-24">機聯網總數</th>
-                                <th class="p-2 border-r border-black w-24">機聯網完成數</th>
-                                <th class="p-2 border-r border-black w-28 bg-blue-50">機聯網進度</th>
-                                <th class="p-2 border-r border-black w-24">網路設備總數</th>
-                                <th class="p-2 border-r border-black w-24">網路設備完成數</th>
-                                <th class="p-2 border-r border-black w-28 bg-emerald-50">網路設備進度</th>
-                                <th class="p-2 border-r border-black w-20">WIFI總數</th>
-                                <th class="p-2 border-r border-black w-20">WIFI完成數</th>
-                                <th class="p-2 border-r border-black w-28 bg-teal-50">WIFI進度</th>
-                                <th class="p-2 border-r border-black w-24">平板設備總數</th>
-                                <th class="p-2 border-r border-black w-24">平板設備使用數</th>
-                                <th class="p-2 border-r border-black w-28 bg-purple-50">平板設備使用進度</th>
-                                <th class="p-2 border-black min-w-[120px]">備註</th>
+                            <tr class="bg-creamDark border-b border-black text-gray-800 font-medium text-center text-xs">
+                                <th class="p-2 border-r border-gray-300 w-12">操作</th>
+                                <th class="p-2 border-r border-gray-300 w-14">編號</th>
+                                <th class="p-2 border-r border-gray-300 w-32">課別</th>
+                                <th class="p-2 border-r border-gray-300 w-20 bg-sky-50">機台總數</th>
+                                <th class="p-2 border-r border-gray-300 w-24">三色燈總數</th>
+                                <th class="p-2 border-r border-gray-300 w-24">三色燈完成數</th>
+                                <th class="p-2 border-r border-gray-300 w-28 bg-sky-50">三色燈模組進度</th>
+                                <th class="p-2 border-r border-gray-300 w-24">機聯網總數</th>
+                                <th class="p-2 border-r border-gray-300 w-24">機聯網完成數</th>
+                                <th class="p-2 border-r border-gray-300 w-28 bg-blue-50">機聯網進度</th>
+                                <th class="p-2 border-r border-gray-300 w-24">網路設備總數</th>
+                                <th class="p-2 border-r border-gray-300 w-24">網路設備完成數</th>
+                                <th class="p-2 border-r border-gray-300 w-28 bg-emerald-50">網路設備進度</th>
+                                <th class="p-2 border-r border-gray-300 w-20">WIFI總數</th>
+                                <th class="p-2 border-r border-gray-300 w-20">WIFI完成數</th>
+                                <th class="p-2 border-r border-gray-300 w-28 bg-cyan-50">WIFI進度</th>
+                                <th class="p-2 border-r border-gray-300 w-24">平板設備總數</th>
+                                <th class="p-2 border-r border-gray-300 w-24">平板設備使用數</th>
+                                <th class="p-2 border-r border-gray-300 w-28 bg-purple-50">平板設備使用進度</th>
+                                <th class="p-2 border-gray-300 min-w-[120px]">備註</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody">
@@ -243,74 +243,100 @@
 
             <!-- 分頁 2：圖表分析專區 -->
             <section id="tabChartView" class="space-y-6 hidden">
-                <!-- KPI 數據卡片列 -->
+                <!-- 圖表控制面板：下拉選單選取課別或全廠總覽 -->
+                <div class="card-custom p-4 rounded-xl flex flex-wrap justify-between items-center gap-4 bg-white">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-filter text-sky-600 text-lg"></i>
+                        <label for="chartDeptSelect" class="text-gray-800 font-medium text-sm">統計對象篩選：</label>
+                        <select id="chartDeptSelect" onchange="renderCharts()" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-medium bg-cream focus:border-sky-500 outline-none">
+                            <option value="ALL" selected>🌐 全部課別總覽 (全廠統計)</option>
+                            <option value="A1金一">A1金一</option>
+                            <option value="B1石墨">B1石墨</option>
+                            <option value="C1金二">C1金二</option>
+                            <option value="C1金三">C1金三</option>
+                            <option value="D3金三">D3金三</option>
+                            <option value="D1金二">D1金二</option>
+                            <option value="D1金三">D1金三</option>
+                            <option value="C3線切割">C3線切割</option>
+                            <option value="C1磨床">C1磨床</option>
+                            <option value="C3磨床">C3磨床</option>
+                            <option value="D1複材">D1複材</option>
+                            <option value="D4矽加工">D4矽加工</option>
+                        </select>
+                    </div>
+                    <div class="text-xs text-gray-500 font-normal">
+                        可透過下拉選單即時切換個別課別或全廠數據比對
+                    </div>
+                </div>
+
+                <!-- KPI 數據卡片列 (全面淡藍配色) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-sky-500">
-                        <div class="text-xs font-black text-black">三色燈模組</div>
-                        <div id="kpiSignalProgress" class="text-2xl font-black text-black my-1">0.0%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
-                            <div id="kpiSignalBar" class="bg-sky-500 h-full rounded-full" style="width: 0%"></div>
+                    <div class="card-custom p-4 rounded-xl border-l-4 border-l-sky-400">
+                        <div class="text-xs font-normal text-gray-600">三色燈模組</div>
+                        <div id="kpiSignalProgress" class="text-2xl font-bold text-gray-900 my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div id="kpiSignalBar" class="bg-sky-400 h-full rounded-full" style="width: 0%"></div>
                         </div>
-                        <div id="kpiSignalDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                        <div id="kpiSignalDetail" class="text-xs text-gray-500 mt-1">0 / 0 完成</div>
                     </div>
 
-                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-blue-500">
-                        <div class="text-xs font-black text-black">機聯網總進度</div>
-                        <div id="kpiIiotProgress" class="text-2xl font-black text-black my-1">0.0%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
-                            <div id="kpiIiotBar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                    <div class="card-custom p-4 rounded-xl border-l-4 border-l-sky-600">
+                        <div class="text-xs font-normal text-gray-600">機聯網總進度</div>
+                        <div id="kpiIiotProgress" class="text-2xl font-bold text-gray-900 my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div id="kpiIiotBar" class="bg-sky-600 h-full rounded-full" style="width: 0%"></div>
                         </div>
-                        <div id="kpiIiotDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                        <div id="kpiIiotDetail" class="text-xs text-gray-500 mt-1">0 / 0 完成</div>
                     </div>
 
-                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-emerald-500">
-                        <div class="text-xs font-black text-black">網路設備進度</div>
-                        <div id="kpiNetworkProgress" class="text-2xl font-black text-black my-1">0.0%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                    <div class="card-custom p-4 rounded-xl border-l-4 border-l-emerald-500">
+                        <div class="text-xs font-normal text-gray-600">網路設備進度</div>
+                        <div id="kpiNetworkProgress" class="text-2xl font-bold text-gray-900 my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                             <div id="kpiNetworkBar" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
                         </div>
-                        <div id="kpiNetworkDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                        <div id="kpiNetworkDetail" class="text-xs text-gray-500 mt-1">0 / 0 完成</div>
                     </div>
 
-                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-cyan-500">
-                        <div class="text-xs font-black text-black">WIFI佈建進度</div>
-                        <div id="kpiWifiProgress" class="text-2xl font-black text-black my-1">0.0%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                    <div class="card-custom p-4 rounded-xl border-l-4 border-l-cyan-500">
+                        <div class="text-xs font-normal text-gray-600">WIFI佈建進度</div>
+                        <div id="kpiWifiProgress" class="text-2xl font-bold text-gray-900 my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                             <div id="kpiWifiBar" class="bg-cyan-500 h-full rounded-full" style="width: 0%"></div>
                         </div>
-                        <div id="kpiWifiDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                        <div id="kpiWifiDetail" class="text-xs text-gray-500 mt-1">0 / 0 完成</div>
                     </div>
 
-                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-purple-500">
-                        <div class="text-xs font-black text-black">平板設備使用</div>
-                        <div id="kpiTabletProgress" class="text-2xl font-black text-black my-1">0.0%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
-                            <div id="kpiTabletBar" class="bg-purple-500 h-full rounded-full" style="width: 0%"></div>
+                    <div class="card-custom p-4 rounded-xl border-l-4 border-l-indigo-500">
+                        <div class="text-xs font-normal text-gray-600">平板設備使用</div>
+                        <div id="kpiTabletProgress" class="text-2xl font-bold text-gray-900 my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div id="kpiTabletBar" class="bg-indigo-500 h-full rounded-full" style="width: 0%"></div>
                         </div>
-                        <div id="kpiTabletDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                        <div id="kpiTabletDetail" class="text-xs text-gray-500 mt-1">0 / 0 完成</div>
                     </div>
                 </div>
 
                 <!-- 圖表展示區 -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="card-bold p-5 rounded-xl lg:col-span-2">
-                        <div class="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
-                            <h3 class="text-lg font-black text-black flex items-center">
-                                <i class="fa-solid fa-chart-column text-brandAccent mr-2"></i>各課別機聯網機台完成數比對
+                    <div class="card-custom p-5 rounded-xl lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
+                            <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                <i class="fa-solid fa-chart-column text-sky-600 mr-2"></i><span id="chartBarTitle">各課別機聯網機台完成數比對</span>
                             </h3>
-                            <span class="text-xs font-bold bg-sky-100 text-black border border-black px-2 py-0.5 rounded">即時重繪</span>
+                            <span class="text-xs font-normal bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded">即時數據</span>
                         </div>
                         <div class="h-80 relative">
                             <canvas id="departmentChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="card-bold p-5 rounded-xl">
-                        <div class="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
-                            <h3 class="text-lg font-black text-black flex items-center">
-                                <i class="fa-solid fa-chart-pie text-brandSecondary mr-2"></i>各模組總完成率權重
+                    <div class="card-custom p-5 rounded-xl">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
+                            <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                <i class="fa-solid fa-chart-pie text-sky-500 mr-2"></i>各模組總完成率權重
                             </h3>
-                            <span class="text-xs font-bold bg-blue-100 text-black border border-black px-2 py-0.5 rounded">全廠統計</span>
+                            <span class="text-xs font-normal bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded">項目完成率</span>
                         </div>
                         <div class="h-80 relative">
                             <canvas id="overallChart"></canvas>
@@ -376,7 +402,7 @@
                     } else {
                         // 預設給予 12 筆課別預設資料
                         window.currentData = DEPARTMENTS.map((dept, idx) => createEmptyRow(idx + 1, dept));
-                        saveAllDataToFirebase(); // 初始化存入
+                        saveAllDataToFirebase();
                     }
                     renderTable();
                     renderCharts();
@@ -420,11 +446,11 @@
         function updateConnectionStatus(isConnected) {
             const statusEl = document.getElementById('connectionStatus');
             if (isConnected) {
-                statusEl.className = "inline-flex items-center text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-black font-black";
-                statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>已即時連線`;
+                statusEl.className = "inline-flex items-center text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-black font-normal";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>已即時連線`;
             } else {
-                statusEl.className = "inline-flex items-center text-red-800 bg-red-100 px-2 py-0.5 rounded border border-black font-black";
-                statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></span>已離線`;
+                statusEl.className = "inline-flex items-center text-red-800 bg-red-100 px-2 py-0.5 rounded border border-black font-normal";
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>已離線`;
             }
         }
 
@@ -484,100 +510,100 @@
                 const tabletProgress = calcProgress(tabletDone, tabletTotal);
 
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-black hover:bg-sky-50/50 text-center text-xs font-black";
+                tr.className = "border-b border-gray-200 hover:bg-sky-50/50 text-center text-xs font-normal";
 
                 const deptOptions = DEPARTMENTS.map(d => 
                     `<option value="${d}" ${row.department === d ? 'selected' : ''}>${d}</option>`
                 ).join('');
 
                 tr.innerHTML = `
-                    <td class="p-1 border-r border-black">
-                        <button onclick="deleteRow(${index})" class="text-red-600 hover:text-red-800 p-1">
+                    <td class="p-1 border-r border-gray-200">
+                        <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 p-1">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
-                    <td class="p-1 border-r border-black">${index + 1}</td>
-                    <td class="p-1 border-r border-black">
-                        <select onchange="updateRowValue(${index}, 'department', this.value)" class="table-input font-black bg-cream">
+                    <td class="p-1 border-r border-gray-200">${index + 1}</td>
+                    <td class="p-1 border-r border-gray-200">
+                        <select onchange="updateRowValue(${index}, 'department', this.value)" class="table-input font-normal bg-cream">
                             ${deptOptions}
                         </select>
                     </td>
-                    <td class="p-1 border-r border-black bg-sky-50">
+                    <td class="p-1 border-r border-gray-200 bg-sky-50">
                         <input type="number" min="0" value="${machineTotal}" onchange="updateRowValue(${index}, 'machineTotal', this.value)" class="table-input text-right">
                     </td>
                     
-                    <!-- 三色燈 -->
-                    <td class="p-1 border-r border-black">
+                    <!-- 三色燈 (淡藍系) -->
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${signalTotal}" onchange="updateRowValue(${index}, 'signalTotal', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${signalDone}" onchange="updateRowValue(${index}, 'signalDone', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black bg-sky-50/60 px-2">
-                        <div class="font-black text-black text-right mb-0.5">${signalProgress.toFixed(1)}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
-                            <div class="bg-sky-500 h-full" style="width: ${signalProgress}%"></div>
+                    <td class="p-1 border-r border-gray-200 bg-sky-50/60 px-2">
+                        <div class="font-normal text-gray-800 text-right mb-0.5">${signalProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-sky-400 h-full" style="width: ${signalProgress}%"></div>
                         </div>
                     </td>
 
                     <!-- 機聯網 -->
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${iiotTotal}" onchange="updateRowValue(${index}, 'iiotTotal', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${iiotDone}" onchange="updateRowValue(${index}, 'iiotDone', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black bg-blue-50/60 px-2">
-                        <div class="font-black text-black text-right mb-0.5">${iiotProgress.toFixed(1)}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
-                            <div class="bg-blue-500 h-full" style="width: ${iiotProgress}%"></div>
+                    <td class="p-1 border-r border-gray-200 bg-blue-50/60 px-2">
+                        <div class="font-normal text-gray-800 text-right mb-0.5">${iiotProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-sky-600 h-full" style="width: ${iiotProgress}%"></div>
                         </div>
                     </td>
 
                     <!-- 網路設備 -->
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${netTotal}" onchange="updateRowValue(${index}, 'netTotal', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${netDone}" onchange="updateRowValue(${index}, 'netDone', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black bg-emerald-50/60 px-2">
-                        <div class="font-black text-black text-right mb-0.5">${netProgress.toFixed(1)}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                    <td class="p-1 border-r border-gray-200 bg-emerald-50/60 px-2">
+                        <div class="font-normal text-gray-800 text-right mb-0.5">${netProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                             <div class="bg-emerald-500 h-full" style="width: ${netProgress}%"></div>
                         </div>
                     </td>
 
                     <!-- WIFI -->
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${wifiTotal}" onchange="updateRowValue(${index}, 'wifiTotal', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${wifiDone}" onchange="updateRowValue(${index}, 'wifiDone', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black bg-cyan-50/60 px-2">
-                        <div class="font-black text-black text-right mb-0.5">${wifiProgress.toFixed(1)}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                    <td class="p-1 border-r border-gray-200 bg-cyan-50/60 px-2">
+                        <div class="font-normal text-gray-800 text-right mb-0.5">${wifiProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                             <div class="bg-cyan-500 h-full" style="width: ${wifiProgress}%"></div>
                         </div>
                     </td>
 
                     <!-- 平板設備 -->
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${tabletTotal}" onchange="updateRowValue(${index}, 'tabletTotal', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black">
+                    <td class="p-1 border-r border-gray-200">
                         <input type="number" min="0" value="${tabletDone}" onchange="updateRowValue(${index}, 'tabletDone', this.value)" class="table-input text-right">
                     </td>
-                    <td class="p-1 border-r border-black bg-purple-50/60 px-2">
-                        <div class="font-black text-black text-right mb-0.5">${tabletProgress.toFixed(1)}%</div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
-                            <div class="bg-purple-500 h-full" style="width: ${tabletProgress}%"></div>
+                    <td class="p-1 border-r border-gray-200 bg-purple-50/60 px-2">
+                        <div class="font-normal text-gray-800 text-right mb-0.5">${tabletProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-indigo-500 h-full" style="width: ${tabletProgress}%"></div>
                         </div>
                     </td>
 
                     <!-- 備註 -->
-                    <td class="p-1 border-black">
+                    <td class="p-1 border-gray-200">
                         <input type="text" value="${row.note || ''}" onchange="updateRowValue(${index}, 'note', this.value)" class="table-input text-left" placeholder="輸入備註...">
                     </td>
                 `;
@@ -649,9 +675,16 @@
             }
         };
 
-        // 渲染分析圖表與 KPI
+        // 渲染分析圖表與 KPI (支援選單下拉切換全廠或各課別)
         window.renderCharts = function() {
             if (!window.currentData) return;
+
+            const selectedDept = document.getElementById('chartDeptSelect').value;
+
+            // 根據選單篩選資料
+            const filteredData = selectedDept === 'ALL' 
+                ? window.currentData 
+                : window.currentData.filter(d => d.department === selectedDept);
 
             let totalSignalT = 0, totalSignalD = 0;
             let totalIiotT = 0, totalIiotD = 0;
@@ -663,7 +696,7 @@
             const deptIiotTotals = [];
             const deptIiotDones = [];
 
-            window.currentData.forEach(row => {
+            filteredData.forEach(row => {
                 const parseNum = (val) => isNaN(parseFloat(val)) ? 0 : parseFloat(val);
 
                 totalSignalT += parseNum(row.signalTotal);
@@ -682,6 +715,7 @@
                 deptIiotDones.push(parseNum(row.iiotDone));
             });
 
+            // 更新 KPI 卡片
             const updateKpi = (idPrefix, done, total) => {
                 const pct = total > 0 ? ((done / total) * 100).toFixed(1) : "0.0";
                 document.getElementById(`kpi${idPrefix}Progress`).textContent = `${pct}%`;
@@ -695,6 +729,15 @@
             updateKpi('Wifi', totalWifiD, totalWifiT);
             updateKpi('Tablet', totalTabD, totalTabT);
 
+            // 更新柱狀圖標題
+            const titleEl = document.getElementById('chartBarTitle');
+            if (selectedDept === 'ALL') {
+                titleEl.textContent = '全廠各課別機聯網機台完成數比對';
+            } else {
+                titleEl.textContent = `${selectedDept} - 機聯網機台與完成數`;
+            }
+
+            // 1. 長條圖渲染
             const ctxDept = document.getElementById('departmentChart').getContext('2d');
             if (window.deptChartInstance) window.deptChartInstance.destroy();
 
@@ -706,16 +749,16 @@
                         {
                             label: '機聯網總數',
                             data: deptIiotTotals,
-                            backgroundColor: '#0066FF',
-                            borderColor: '#000000',
-                            borderWidth: 2
+                            backgroundColor: '#38BDF8',
+                            borderColor: '#0284C7',
+                            borderWidth: 1
                         },
                         {
                             label: '機聯網完成數',
                             data: deptIiotDones,
                             backgroundColor: '#10B981',
-                            borderColor: '#000000',
-                            borderWidth: 2
+                            borderColor: '#059669',
+                            borderWidth: 1
                         }
                     ]
                 },
@@ -723,15 +766,16 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { labels: { font: { weight: 'bold', family: 'Noto Sans TC' }, color: '#000' } }
+                        legend: { labels: { font: { weight: 'normal', family: 'Noto Sans TC' }, color: '#374151' } }
                     },
                     scales: {
-                        x: { ticks: { font: { weight: 'bold' }, color: '#000' } },
-                        y: { ticks: { font: { weight: 'bold' }, color: '#000' }, beginAtZero: true }
+                        x: { ticks: { font: { weight: 'normal' }, color: '#374151' } },
+                        y: { ticks: { font: { weight: 'normal' }, color: '#374151' }, beginAtZero: true }
                     }
                 }
             });
 
+            // 2. 圓餅圖/環狀圖渲染
             const ctxOverall = document.getElementById('overallChart').getContext('2d');
             if (window.overallChartInstance) window.overallChartInstance.destroy();
 
@@ -749,16 +793,16 @@
                             getRate(totalWifiD, totalWifiT),
                             getRate(totalTabD, totalTabT)
                         ],
-                        backgroundColor: ['#0066FF', '#0088FF', '#10B981', '#06B6D4', '#8B5CF6'],
-                        borderColor: '#000000',
-                        borderWidth: 2
+                        backgroundColor: ['#38BDF8', '#0284C7', '#10B981', '#06B6D4', '#8B5CF6'],
+                        borderWidth: 1,
+                        borderColor: '#FFFFFF'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { weight: 'bold', family: 'Noto Sans TC' }, color: '#000' } }
+                        legend: { position: 'bottom', labels: { font: { weight: 'normal', family: 'Noto Sans TC' }, color: '#374151' } }
                     }
                 }
             });
