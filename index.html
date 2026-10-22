@@ -3,410 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>機聯網專案追蹤系統 - 企業商業版</title>
-    <!-- Tailwind CSS CDN -->
+    <title>機聯網專案追蹤系統</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome CDN -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js CDN for Analytics -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS (xlsx) for Excel Export/Import -->
+    <!-- SheetJS (xlsx) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- html2canvas for PNG Export -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        cream: {
-                            50: '#FFFDF9',
-                            100: '#FBF9F5',
-                            200: '#F2EDE4',
-                            300: '#E5DDCF',
-                        },
-                        brand: {
-                            orange: '#FF5722',
-                            blue: '#0284C7',
-                            emerald: '#059669',
-                            amber: '#D97706',
-                            purple: '#7C3AED'
-                        }
+                        cream: '#FBF9F5',
+                        creamDark: '#F3EFE6',
+                        brandAccent: '#FF5722',
+                        brandSecondary: '#0088FF',
+                        brandGreen: '#10B981',
+                        brandPurple: '#8B5CF6'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Force all readable fonts to heavy bold black as requested */
-        body, input, select, button, table, th, td, h1, h2, h3, h4, span, div {
-            font-weight: 700 !important;
-            color: #000000 !important;
+        body {
+            background-color: #FBF9F5;
+            color: #000000;
+            font-weight: 700;
+            font-family: 'Noto Sans TC', sans-serif;
         }
-
-        /* Custom scrollbar for large data tables */
-        .table-container::-webkit-scrollbar {
-            height: 10px;
-            width: 10px;
+        * {
+            border-color: #000000;
         }
-        .table-container::-webkit-scrollbar-track {
-            background: #E5DDCF;
+        .btn-bold {
+            font-weight: 800;
+            box-shadow: 3px 3px 0px #000000;
+            transition: all 0.1s ease;
         }
-        .table-container::-webkit-scrollbar-thumb {
-            background: #FF5722;
-            border-radius: 5px;
+        .btn-bold:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000000;
         }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #E64A19;
+        .card-bold {
+            border: 2px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            background-color: #FFFFFF;
         }
-
-        /* Lock table header sticky */
-        th.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 20;
-            background-color: #F2EDE4 !important;
+        .table-input {
+            width: 100%;
+            padding: 4px 8px;
+            font-weight: 800;
+            color: #000000;
+            background-color: #FFFFFF;
+            border: 1.5px solid #000000;
+            border-radius: 4px;
+            outline: none;
         }
-        td.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 10;
-            background-color: #FBF9F5 !important;
+        .table-input:focus {
+            background-color: #FFF9E6;
+            border-color: #FF5722;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3EFE6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #000000;
+            border-radius: 4px;
+        }
+        .tab-btn {
+            border: 2px solid #000000;
+            font-weight: 800;
+            transition: all 0.15s ease;
+        }
+        .tab-btn.active {
+            background-color: #FF5722;
+            color: #FFFFFF;
+            box-shadow: 3px 3px 0px #000000;
+        }
+        .tab-btn:not(.active) {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #F3EFE6;
         }
     </style>
 </head>
-<body class="bg-cream-100 min-h-screen font-sans antialiased selection:bg-brand-orange selection:text-white">
+<body class="min-h-screen pb-12">
 
-    <!-- Auth View (Login Modal) -->
-    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
-        <div class="bg-cream-50 rounded-3xl shadow-2xl w-full max-w-md p-8 border-4 border-black">
-            <div class="text-center mb-8">
-                <div class="inline-flex p-4 rounded-2xl bg-brand-orange text-white mb-3 shadow-lg shadow-brand-orange/30">
-                    <i class="fa-solid fa-network-wired text-4xl text-white"></i>
+    <!-- 登入 Modal (無登入禁止使用) -->
+    <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="card-bold p-8 max-w-md w-full rounded-xl relative">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-brandAccent text-white rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-black shadow-[3px_3px_0px_#000]">
+                    <i class="fa-solid fa-network-wired text-2xl"></i>
                 </div>
-                <h1 class="text-3xl font-extrabold text-black tracking-tight">機聯網專案追蹤系統</h1>
-                <p class="text-sm font-bold text-black mt-2">請登入帳號以存取企業即時數據</p>
+                <h2 class="text-2xl font-black text-black">機聯網專案追蹤系統</h2>
+                <p class="text-sm text-black font-bold mt-1">請登入 Firebase 帳號以獲取系統存取權限</p>
             </div>
-
-            <form id="loginForm" class="space-y-5">
+            <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-bold text-black mb-1.5">電子郵件 (Email)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-black">
-                            <i class="fa-solid fa-envelope"></i>
-                        </span>
-                        <input type="email" id="authEmail" required autocomplete="email" placeholder="user@company.com" 
-                            class="w-full pl-10 pr-4 py-3 bg-white border-2 border-black rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-orange transition-all font-bold text-black">
-                    </div>
+                    <label class="block text-black font-black mb-1 text-sm">電子郵件帳號 (Email)</label>
+                    <input type="email" id="loginEmail" required class="w-full p-2.5 border-2 border-black rounded-lg font-bold outline-none focus:bg-amber-50" placeholder="user@company.com">
                 </div>
-
                 <div>
-                    <label class="block text-sm font-bold text-black mb-1.5">密碼 (Password)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-black">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="password" id="authPassword" required autocomplete="current-password" placeholder="••••••••" 
-                            class="w-full pl-10 pr-4 py-3 bg-white border-2 border-black rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-orange transition-all font-bold text-black">
-                    </div>
+                    <label class="block text-black font-black mb-1 text-sm">密碼 (Password)</label>
+                    <input type="password" id="loginPassword" required class="w-full p-2.5 border-2 border-black rounded-lg font-bold outline-none focus:bg-amber-50" placeholder="••••••••">
                 </div>
-
-                <div id="authError" class="hidden p-3 rounded-xl bg-red-100 border-2 border-red-600 text-red-900 text-xs font-bold"></div>
-
-                <button type="submit" id="loginBtn" class="w-full py-3.5 bg-brand-orange hover:bg-orange-600 active:bg-orange-700 text-white font-black text-base rounded-xl shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 border-2 border-black">
-                    <i class="fa-solid fa-right-to-bracket text-white"></i> 登入系統
+                <div id="loginError" class="text-red-600 font-black text-sm hidden bg-red-100 p-2 border border-red-500 rounded"></div>
+                <button type="submit" id="btnLogin" class="w-full bg-brandAccent hover:bg-orange-600 text-white font-black py-3 rounded-lg btn-bold text-lg border-2 border-black">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i>登入系統
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Main Application View -->
-    <div id="appContainer" class="hidden flex flex-col min-h-screen">
-        
-        <!-- Header / Navigation -->
-        <header class="bg-cream-50 border-b-4 border-black sticky top-0 z-30 shadow-md">
-            <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                <!-- App Title & Connection Badge -->
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-3 text-black font-black text-2xl tracking-wide">
-                        <div class="p-2 bg-brand-orange rounded-xl border-2 border-black">
-                            <i class="fa-solid fa-network-wired text-white text-xl"></i>
-                        </div>
-                        <span class="hidden sm:inline">機聯網專案追蹤系統</span>
-                    </div>
-                    <span class="text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-2 border-2 border-black shadow-sm" id="connectionBadge">
-                        <span class="w-2.5 h-2.5 rounded-full bg-slate-400 animate-pulse" id="connectionDot"></span>
-                        <span id="connectionText">連線檢查中...</span>
-                    </span>
+    <!-- 頂部 Navbar -->
+    <header class="bg-white border-b-4 border-black sticky top-0 z-30 shadow-md">
+        <div class="max-w-[1700px] mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brandAccent text-white p-2.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000]">
+                    <i class="fa-solid fa-industry text-xl"></i>
                 </div>
-
-                <!-- Status & User Profile / Logout -->
-                <div class="flex items-center space-x-4">
-                    <div class="hidden lg:flex flex-col items-end text-xs font-bold text-black bg-cream-200 px-3 py-1.5 rounded-xl border-2 border-black">
-                        <span class="flex items-center gap-1.5">
-                            <i class="fa-regular fa-clock text-brand-orange"></i>
-                            上次儲存時間：<span id="lastSavedTime" class="text-black">尚未更新</span>
+                <div>
+                    <h1 class="text-2xl font-black text-black tracking-tight">機聯網專案進度追蹤</h1>
+                    <div class="flex items-center space-x-3 text-xs font-black mt-0.5">
+                        <span id="connectionStatus" class="inline-flex items-center text-red-600 bg-red-100 px-2 py-0.5 rounded border border-black">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5 animate-pulse"></span>已離線 / 未連線
                         </span>
-                        <span class="text-black" id="userDisplay">--</span>
+                        <span class="text-black bg-creamDark px-2 py-0.5 rounded border border-black">
+                            上次同步：<span id="lastSavedTime">未儲存</span>
+                        </span>
                     </div>
-
-                    <button id="guideBtn" class="p-2.5 bg-cream-200 hover:bg-cream-300 border-2 border-black rounded-xl transition hover:-translate-y-0.5" title="GitHub Pages 專案指引">
-                        <i class="fa-solid fa-circle-info text-xl text-black"></i>
-                    </button>
-
-                    <button id="logoutBtn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-black transition flex items-center gap-2 border-2 border-black shadow-md hover:-translate-y-0.5">
-                        <i class="fa-solid fa-arrow-right-from-bracket text-white"></i> 登出
-                    </button>
                 </div>
             </div>
-        </header>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 max-w-[1920px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <!-- 功能按鈕區 -->
+            <div class="flex items-center flex-wrap gap-2">
+                <button onclick="exportToExcel()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                    <i class="fa-solid fa-file-excel mr-1.5"></i>匯出 Excel
+                </button>
+                <label class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center cursor-pointer">
+                    <i class="fa-solid fa-file-import mr-1.5"></i>匯入 Excel
+                    <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
+                </label>
+                <button onclick="exportToPNG()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                    <i class="fa-solid fa-file-image mr-1.5"></i>匯出 PNG
+                </button>
+                <div class="h-6 w-0.5 bg-black mx-1 hidden sm:block"></div>
+                <div id="userInfo" class="hidden items-center space-x-2 bg-creamDark px-3 py-1.5 rounded-lg border-2 border-black">
+                    <i class="fa-solid fa-user-circle text-lg text-black"></i>
+                    <span id="userEmailDisplay" class="text-xs font-black text-black"></span>
+                    <button onclick="handleLogout()" class="text-xs bg-red-500 text-white font-black px-2 py-1 rounded border border-black ml-1 hover:bg-red-600">登出</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 分頁導覽頁籤 (Tab Navigation) -->
+    <main class="max-w-[1700px] mx-auto px-4 mt-6">
+        <div class="flex border-b-2 border-black mb-6 space-x-2">
+            <button id="tabBtnData" onclick="switchTab('data')" class="tab-btn active px-6 py-2.5 rounded-t-lg text-base flex items-center">
+                <i class="fa-solid fa-table-list mr-2"></i>📋 數據管理列表
+            </button>
+            <button id="tabBtnChart" onclick="switchTab('chart')" class="tab-btn px-6 py-2.5 rounded-t-lg text-base flex items-center">
+                <i class="fa-solid fa-chart-pie mr-2"></i>📊 統計圖表分析
+            </button>
+        </div>
+
+        <!-- 匯出範圍區域 -->
+        <div id="exportContainer" class="p-2 rounded-xl bg-cream">
             
-            <!-- Dashboard Toolbar -->
-            <div class="bg-cream-50 p-5 rounded-2xl shadow-lg border-3 border-black flex flex-wrap items-center justify-between gap-4">
-                <!-- Left: Action Buttons -->
-                <div class="flex flex-wrap items-center gap-3">
-                    <button id="addRowBtn" class="px-5 py-2.5 bg-brand-orange hover:bg-orange-600 text-white rounded-xl text-sm font-black transition flex items-center gap-2 shadow-md hover:-translate-y-0.5 border-2 border-black">
-                        <i class="fa-solid fa-plus text-white"></i> 新增數據列
-                    </button>
-                    <button id="saveAllBtn" class="px-5 py-2.5 bg-brand-emerald hover:bg-emerald-600 text-white rounded-xl text-sm font-black transition flex items-center gap-2 shadow-md hover:-translate-y-0.5 border-2 border-black">
-                        <i class="fa-solid fa-cloud-arrow-up text-white"></i> 一鍵同步存檔
-                    </button>
-                    <div class="h-8 w-0.5 bg-black mx-1 hidden sm:block"></div>
-                    
-                    <!-- Excel Import Hidden Input & Trigger -->
-                    <input type="file" id="excelInput" accept=".xlsx, .xls" class="hidden">
-                    <button id="importExcelBtn" class="px-4 py-2.5 bg-cream-200 hover:bg-cream-300 text-black rounded-xl text-sm font-black transition flex items-center gap-2 border-2 border-black shadow-sm hover:-translate-y-0.5">
-                        <i class="fa-solid fa-file-import text-brand-emerald"></i> 匯入 Excel
-                    </button>
-                    
-                    <!-- Export Options -->
-                    <button id="exportExcelBtn" class="px-4 py-2.5 bg-cream-200 hover:bg-cream-300 text-black rounded-xl text-sm font-black transition flex items-center gap-2 border-2 border-black shadow-sm hover:-translate-y-0.5">
-                        <i class="fa-solid fa-file-excel text-brand-emerald"></i> 匯出 Excel
-                    </button>
-                    <button id="exportPngBtn" class="px-4 py-2.5 bg-cream-200 hover:bg-cream-300 text-black rounded-xl text-sm font-black transition flex items-center gap-2 border-2 border-black shadow-sm hover:-translate-y-0.5">
-                        <i class="fa-solid fa-file-image text-brand-blue"></i> 匯出 PNG (全圖表+表格)
-                    </button>
-                </div>
-
-                <!-- Right: Summary Quick Stats -->
-                <div class="flex items-center gap-6 bg-cream-200 px-4 py-2 rounded-xl border-2 border-black text-sm font-black">
-                    <div>總記錄數: <span id="totalCount" class="text-brand-orange text-lg">0</span> 筆</div>
-                    <div>線上同步: <span class="text-brand-emerald">即時連線中</span></div>
-                </div>
-            </div>
-
-            <!-- ANALYTICS DASHBOARD SECTION -->
-            <div class="space-y-6" id="analyticsSection">
-                
-                <!-- Chart Row 1: KPI Cards Overview -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <!-- KPI Card 1: 三色燈 -->
-                    <div class="bg-cream-50 p-4 rounded-2xl border-3 border-black shadow-md hover:shadow-xl transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-black">三色燈模組</span>
-                            <i class="fa-solid fa-traffic-light text-xl text-brand-orange"></i>
-                        </div>
-                        <div class="text-2xl font-black text-black mb-1" id="kpiLightPct">0.0%</div>
-                        <div class="w-full bg-cream-300 h-2.5 rounded-full overflow-hidden border border-black mb-1">
-                            <div id="kpiLightBar" class="bg-brand-orange h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <div class="text-[11px] font-black text-black" id="kpiLightRatio">0 / 0 完成</div>
+            <!-- 分頁 1：數據表格管理區 -->
+            <section id="tabDataView" class="space-y-4">
+                <div class="card-bold p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-black text-white px-3 py-1 rounded font-black text-sm">工作表</span>
+                        <h2 class="text-xl font-black text-black">機聯網進度追蹤</h2>
                     </div>
-
-                    <!-- KPI Card 2: 機聯網 -->
-                    <div class="bg-cream-50 p-4 rounded-2xl border-3 border-black shadow-md hover:shadow-xl transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-black">機聯網總進度</span>
-                            <i class="fa-solid fa-microchip text-xl text-brand-blue"></i>
-                        </div>
-                        <div class="text-2xl font-black text-black mb-1" id="kpiIiotPct">0.0%</div>
-                        <div class="w-full bg-cream-300 h-2.5 rounded-full overflow-hidden border border-black mb-1">
-                            <div id="kpiIiotBar" class="bg-brand-blue h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <div class="text-[11px] font-black text-black" id="kpiIiotRatio">0 / 0 完成</div>
-                    </div>
-
-                    <!-- KPI Card 3: 網路設備 -->
-                    <div class="bg-cream-50 p-4 rounded-2xl border-3 border-black shadow-md hover:shadow-xl transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-black">網路設備進度</span>
-                            <i class="fa-solid fa-server text-xl text-brand-emerald"></i>
-                        </div>
-                        <div class="text-2xl font-black text-black mb-1" id="kpiNetPct">0.0%</div>
-                        <div class="w-full bg-cream-300 h-2.5 rounded-full overflow-hidden border border-black mb-1">
-                            <div id="kpiNetBar" class="bg-brand-emerald h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <div class="text-[11px] font-black text-black" id="kpiNetRatio">0 / 0 完成</div>
-                    </div>
-
-                    <!-- KPI Card 4: WIFI -->
-                    <div class="bg-cream-50 p-4 rounded-2xl border-3 border-black shadow-md hover:shadow-xl transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-black">WIFI佈建進度</span>
-                            <i class="fa-solid fa-wifi text-xl text-brand-amber"></i>
-                        </div>
-                        <div class="text-2xl font-black text-black mb-1" id="kpiWifiPct">0.0%</div>
-                        <div class="w-full bg-cream-300 h-2.5 rounded-full overflow-hidden border border-black mb-1">
-                            <div id="kpiWifiBar" class="bg-brand-amber h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <div class="text-[11px] font-black text-black" id="kpiWifiRatio">0 / 0 完成</div>
-                    </div>
-
-                    <!-- KPI Card 5: 平板設備 -->
-                    <div class="bg-cream-50 p-4 rounded-2xl border-3 border-black shadow-md hover:shadow-xl transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-black">平板設備使用</span>
-                            <i class="fa-solid fa-tablet-screen-button text-xl text-brand-purple"></i>
-                        </div>
-                        <div class="text-2xl font-black text-black mb-1" id="kpiPadPct">0.0%</div>
-                        <div class="w-full bg-cream-300 h-2.5 rounded-full overflow-hidden border border-black mb-1">
-                            <div id="kpiPadBar" class="bg-brand-purple h-full transition-all duration-500" style="width: 0%"></div>
-                        </div>
-                        <div class="text-[11px] font-black text-black" id="kpiPadRatio">0 / 0 完成</div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="addNewRow()" class="bg-amber-400 hover:bg-amber-500 text-black px-3 py-1.5 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                            <i class="fa-solid fa-plus mr-1"></i>新增列
+                        </button>
+                        <button onclick="saveAllDataToFirebase()" class="bg-brandAccent hover:bg-orange-600 text-white px-4 py-1.5 rounded-lg btn-bold border-2 border-black text-sm flex items-center">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i>立即儲存
+                        </button>
                     </div>
                 </div>
 
-                <!-- Chart Row 2: Graphical Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Chart 1: 各課別整體機聯網完成度比對圖 -->
-                    <div class="lg:col-span-2 bg-cream-50 p-5 rounded-2xl border-3 border-black shadow-lg">
-                        <div class="flex items-center justify-between mb-4 pb-2 border-b-2 border-black">
-                            <h3 class="text-base font-black text-black flex items-center gap-2">
-                                <i class="fa-solid fa-chart-column text-brand-orange"></i> 各課別機聯網機台完成數比對
-                            </h3>
-                            <span class="text-xs font-black text-black bg-cream-200 px-2 py-1 rounded border border-black">即時重繪</span>
-                        </div>
-                        <div class="h-72 relative">
-                            <canvas id="deptBarChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Chart 2: 各項目總完成率圓餅/環狀圖 -->
-                    <div class="bg-cream-50 p-5 rounded-2xl border-3 border-black shadow-lg">
-                        <div class="flex items-center justify-between mb-4 pb-2 border-b-2 border-black">
-                            <h3 class="text-base font-black text-black flex items-center gap-2">
-                                <i class="fa-solid fa-chart-pie text-brand-blue"></i> 各模組總完成率權重
-                            </h3>
-                            <span class="text-xs font-black text-black bg-cream-200 px-2 py-1 rounded border border-black">全廠統計</span>
-                        </div>
-                        <div class="h-72 relative">
-                            <canvas id="overallDoughnutChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Table Container Section -->
-            <div class="bg-cream-50 rounded-2xl shadow-lg border-3 border-black overflow-hidden flex flex-col" id="exportArea">
-                
-                <!-- Table Title Bar -->
-                <div class="px-6 py-4 bg-cream-200 border-b-3 border-black flex items-center justify-between">
-                    <h2 class="text-xl font-black text-black flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-brand-orange"></i> 機聯網進度追蹤明細表
-                    </h2>
-                    <span class="text-xs font-black text-black bg-cream-100 border border-black px-3 py-1 rounded-full">
-                        固定欄位鎖定，修改數值動態更新
-                    </span>
-                </div>
-
-                <!-- Scrollable Table Wrapper -->
-                <div class="overflow-x-auto table-container max-h-[calc(100vh-280px)]">
-                    <table class="w-full text-left border-collapse text-xs whitespace-nowrap" id="trackingTable">
-                        <thead class="bg-cream-200 text-black font-black uppercase tracking-wider sticky top-0 z-20 border-b-3 border-black">
-                            <tr class="divide-x-2 divide-black">
-                                <th class="p-3 text-center sticky-col w-16">操作</th>
-                                <th class="p-3 text-center w-16">編號</th>
-                                <th class="p-3 min-w-[130px]">課別</th>
-                                <th class="p-3 text-right">機台總數</th>
-                                <th class="p-3 text-right">三色燈模組總數</th>
-                                <th class="p-3 text-right">三色燈模組完成數</th>
-                                <th class="p-3 min-w-[150px]">三色燈模組進度</th>
-                                <th class="p-3 text-right">機聯網總數</th>
-                                <th class="p-3 text-right">機聯網完成數</th>
-                                <th class="p-3 min-w-[150px]">機聯網進度</th>
-                                <th class="p-3 text-right">網路設備總數</th>
-                                <th class="p-3 text-right">網路設備完成數</th>
-                                <th class="p-3 min-w-[150px]">網路設備進度</th>
-                                <th class="p-3 text-right">WIFI總數</th>
-                                <th class="p-3 text-right">WIFI完成數</th>
-                                <th class="p-3 min-w-[150px]">WIFI進度</th>
-                                <th class="p-3 text-right">平板設備總數</th>
-                                <th class="p-3 text-right">平板設備使用數</th>
-                                <th class="p-3 min-w-[150px]">平板設備使用進度</th>
-                                <th class="p-3 min-w-[200px]">備註</th>
+                <!-- 表格容器 -->
+                <div class="card-bold rounded-xl overflow-x-auto shadow-lg bg-white">
+                    <table class="w-full text-left border-collapse text-sm min-w-[1500px]">
+                        <thead>
+                            <tr class="bg-creamDark border-b-2 border-black text-black font-black text-center text-xs">
+                                <th class="p-2 border-r border-black w-12">操作</th>
+                                <th class="p-2 border-r border-black w-14">編號</th>
+                                <th class="p-2 border-r border-black w-32">課別</th>
+                                <th class="p-2 border-r border-black w-20 bg-amber-100">機台總數</th>
+                                <th class="p-2 border-r border-black w-24">三色燈總數</th>
+                                <th class="p-2 border-r border-black w-24">三色燈完成數</th>
+                                <th class="p-2 border-r border-black w-28 bg-orange-50">三色燈模組進度</th>
+                                <th class="p-2 border-r border-black w-24">機聯網總數</th>
+                                <th class="p-2 border-r border-black w-24">機聯網完成數</th>
+                                <th class="p-2 border-r border-black w-28 bg-blue-50">機聯網進度</th>
+                                <th class="p-2 border-r border-black w-24">網路設備總數</th>
+                                <th class="p-2 border-r border-black w-24">網路設備完成數</th>
+                                <th class="p-2 border-r border-black w-28 bg-emerald-50">網路設備進度</th>
+                                <th class="p-2 border-r border-black w-20">WIFI總數</th>
+                                <th class="p-2 border-r border-black w-20">WIFI完成數</th>
+                                <th class="p-2 border-r border-black w-28 bg-teal-50">WIFI進度</th>
+                                <th class="p-2 border-r border-black w-24">平板設備總數</th>
+                                <th class="p-2 border-r border-black w-24">平板設備使用數</th>
+                                <th class="p-2 border-r border-black w-28 bg-purple-50">平板設備使用進度</th>
+                                <th class="p-2 border-black min-w-[120px]">備註</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="divide-y-2 divide-black bg-cream-50">
-                            <!-- Dynamic Content Rendered Here -->
+                        <tbody id="dataTableBody">
+                            <!-- JS 動態生成表格列 -->
                         </tbody>
                     </table>
                 </div>
+            </section>
 
-                <!-- Empty State Indicator -->
-                <div id="emptyState" class="hidden py-16 text-center text-black font-black">
-                    <i class="fa-solid fa-folder-open text-5xl mb-3 text-brand-orange"></i>
-                    <p class="text-base">尚無追蹤數據，請點擊「新增數據列」或匯入 Excel 檔案</p>
+            <!-- 分頁 2：圖表分析專區 -->
+            <section id="tabChartView" class="space-y-6 hidden">
+                <!-- KPI 數據卡片列 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-orange-500">
+                        <div class="text-xs font-black text-black">三色燈模組</div>
+                        <div id="kpiSignalProgress" class="text-2xl font-black text-black my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                            <div id="kpiSignalBar" class="bg-orange-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="kpiSignalDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                    </div>
+
+                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-blue-500">
+                        <div class="text-xs font-black text-black">機聯網總進度</div>
+                        <div id="kpiIiotProgress" class="text-2xl font-black text-black my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                            <div id="kpiIiotBar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="kpiIiotDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                    </div>
+
+                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-emerald-500">
+                        <div class="text-xs font-black text-black">網路設備進度</div>
+                        <div id="kpiNetworkProgress" class="text-2xl font-black text-black my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                            <div id="kpiNetworkBar" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="kpiNetworkDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                    </div>
+
+                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-amber-500">
+                        <div class="text-xs font-black text-black">WIFI佈建進度</div>
+                        <div id="kpiWifiProgress" class="text-2xl font-black text-black my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                            <div id="kpiWifiBar" class="bg-amber-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="kpiWifiDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                    </div>
+
+                    <div class="card-bold p-4 rounded-xl border-l-8 border-l-purple-500">
+                        <div class="text-xs font-black text-black">平板設備使用</div>
+                        <div id="kpiTabletProgress" class="text-2xl font-black text-black my-1">0.0%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 border border-black overflow-hidden">
+                            <div id="kpiTabletBar" class="bg-purple-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="kpiTabletDetail" class="text-xs font-bold text-black mt-1">0 / 0 完成</div>
+                    </div>
                 </div>
-            </div>
-        </main>
-    </div>
 
-    <!-- GitHub Setup Guide Modal -->
-    <div id="guideModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="bg-cream-50 rounded-3xl shadow-2xl w-full max-w-xl p-6 space-y-4 border-4 border-black max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b-3 border-black pb-3">
-                <h3 class="text-xl font-black text-black flex items-center gap-2">
-                    <i class="fa-brands fa-github text-brand-orange"></i> GitHub Pages 專案託管指引
-                </h3>
-                <button id="closeGuideBtn" class="text-black hover:text-brand-orange text-2xl font-black">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="space-y-3 text-xs font-bold text-black leading-relaxed">
-                <p class="text-sm">請依照以下步驟部署此專案至 GitHub Pages：</p>
-                <ol class="list-decimal pl-5 space-y-2">
-                    <li>在 GitHub 建立 Repository，例如：<code class="bg-cream-300 px-1.5 py-0.5 rounded border border-black text-black">iiot-tracking-system</code>。</li>
-                    <li>將本單一 HTML 檔案檔名設為 <code class="bg-cream-300 px-1.5 py-0.5 rounded border border-black text-black">index.html</code> 並 Commit 上傳。</li>
-                    <li>進入 GitHub Repository 的 <strong>Settings</strong> 頁面。</li>
-                    <li>點選左欄 <strong>Pages</strong> 設定頁。</li>
-                    <li>在 <strong>Build and deployment</strong> 的 Source 選擇 <code class="bg-cream-300 px-1.5 py-0.5 rounded border border-black text-black">Deploy from a branch</code>。</li>
-                    <li>Branch 選取 <code class="bg-cream-300 px-1.5 py-0.5 rounded border border-black text-black">main</code> / Folder 選取 <code class="bg-cream-300 px-1.5 py-0.5 rounded border border-black text-black">/(root)</code> 並 Save。</li>
-                    <li>約 1~2 分鐘後即可使用公開網址登入操作。</li>
-                </ol>
-            </div>
-            <div class="pt-2 text-right border-t-2 border-black">
-                <button id="confirmGuideBtn" class="px-5 py-2 bg-brand-orange text-white rounded-xl text-xs font-black hover:bg-orange-600 border-2 border-black shadow">關閉指引</button>
-            </div>
+                <!-- 圖表展示區 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="card-bold p-5 rounded-xl lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
+                            <h3 class="text-lg font-black text-black flex items-center">
+                                <i class="fa-solid fa-chart-column text-brandAccent mr-2"></i>各課別機聯網機台完成數比對
+                            </h3>
+                            <span class="text-xs font-bold bg-amber-100 text-black border border-black px-2 py-0.5 rounded">即時重繪</span>
+                        </div>
+                        <div class="h-80 relative">
+                            <canvas id="departmentChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card-bold p-5 rounded-xl">
+                        <div class="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
+                            <h3 class="text-lg font-black text-black flex items-center">
+                                <i class="fa-solid fa-chart-pie text-brandSecondary mr-2"></i>各模組總完成率權重
+                            </h3>
+                            <span class="text-xs font-bold bg-blue-100 text-black border border-black px-2 py-0.5 rounded">全廠統計</span>
+                        </div>
+                        <div class="h-80 relative">
+                            <canvas id="overallChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
-    </div>
+    </main>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-28 opacity-0 transition-all duration-300 ease-out bg-black text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-black border-2 border-cream-100">
-        <i id="toastIcon" class="fa-solid fa-circle-check text-brand-emerald text-xl"></i>
-        <span id="toastMsg" class="text-white">通知訊息</span>
-    </div>
-
-    <!-- Firebase SDK Modules & Main Logic -->
+    <!-- Firebase SDK Modular JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getDatabase, 
-            ref, 
-            set, 
-            onValue 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // 1. Firebase API Config
+        // Firebase 設定金鑰
         const firebaseConfig = {
             apiKey: "AIzaSyAHxBGnRK5-0-Neu0-DyovGk4k05gZIWwo",
             authDomain: "iiottracing.firebaseapp.com",
@@ -414,218 +336,388 @@
             storageBucket: "iiottracing.firebasestorage.app",
             messagingSenderId: "985104446689",
             appId: "1:985104446689:web:f76366435bb1e2a25bf3a0",
-            measurementId: "G-VZT5S2RSM4",
-            databaseURL: "https://iiottracing-default-rtdb.firebaseio.com"
+            measurementId: "G-VZT5S2RSM4"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // Department Options Locked
+        // 下拉選單規範選項
         const DEPARTMENTS = [
             "A1金一", "B1石墨", "C1金二", "C1金三", 
             "D3金三", "D1金二", "D1金三", "C3線切割", 
             "C1磨床", "C3磨床", "D1複材", "D4矽加工"
         ];
 
-        // Global State
-        let trackingData = [];
-        let currentUser = null;
-        let deptBarChartInstance = null;
-        let overallDoughnutChartInstance = null;
+        // 全局資料快照
+        window.currentData = [];
+        window.deptChartInstance = null;
+        window.overallChartInstance = null;
 
-        // DOM Elements
-        const authContainer = document.getElementById('authContainer');
-        const appContainer = document.getElementById('appContainer');
-        const loginForm = document.getElementById('loginForm');
-        const authEmail = document.getElementById('authEmail');
-        const authPassword = document.getElementById('authPassword');
-        const authError = document.getElementById('authError');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userDisplay = document.getElementById('userDisplay');
-        const connectionBadge = document.getElementById('connectionBadge');
-        const connectionDot = document.getElementById('connectionDot');
-        const connectionText = document.getElementById('connectionText');
-        const lastSavedTime = document.getElementById('lastSavedTime');
-        const tableBody = document.getElementById('tableBody');
-        const emptyState = document.getElementById('emptyState');
-        const totalCount = document.getElementById('totalCount');
-        const addRowBtn = document.getElementById('addRowBtn');
-        const saveAllBtn = document.getElementById('saveAllBtn');
-        const exportExcelBtn = document.getElementById('exportExcelBtn');
-        const importExcelBtn = document.getElementById('importExcelBtn');
-        const excelInput = document.getElementById('excelInput');
-        const exportPngBtn = document.getElementById('exportPngBtn');
-        const guideBtn = document.getElementById('guideBtn');
-        const guideModal = document.getElementById('guideModal');
-        const closeGuideBtn = document.getElementById('closeGuideBtn');
-        const confirmGuideBtn = document.getElementById('confirmGuideBtn');
-
-        // Toast Notification Function
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.textContent = message;
-            toastIcon.className = isError 
-                ? "fa-solid fa-circle-xmark text-red-500 text-xl" 
-                : "fa-solid fa-circle-check text-brand-emerald text-xl";
-
-            toast.classList.remove('translate-y-28', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-28', 'opacity-0');
-            }, 3000);
-        }
-
-        // Firebase Realtime Database Status Monitor
-        const connectedRef = ref(db, ".info/connected");
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                connectionBadge.className = "text-xs px-3 py-1.5 rounded-full font-black flex items-center gap-2 bg-emerald-100 text-black border-2 border-black";
-                connectionDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse";
-                connectionText.textContent = "即時連線中";
-            } else {
-                connectionBadge.className = "text-xs px-3 py-1.5 rounded-full font-black flex items-center gap-2 bg-red-100 text-black border-2 border-black";
-                connectionDot.className = "w-2.5 h-2.5 rounded-full bg-red-600";
-                connectionText.textContent = "離線狀態";
-            }
-        });
-
-        // Authentication State Observer
+        // AUTH 狀態監聽
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                currentUser = user;
-                authContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                userDisplay.textContent = user.email;
-                initCharts();
-                loadTrackingData();
-            } else {
-                currentUser = null;
-                authContainer.classList.remove('hidden');
-                appContainer.classList.add('hidden');
-            }
-        });
-
-        // Login Handler
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            authError.classList.add('hidden');
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-white"></i> 驗證中...`;
-
-            try {
-                await signInWithEmailAndPassword(auth, authEmail.value, authPassword.value);
-                showToast("登入成功！歡迎使用");
-            } catch (error) {
-                authError.textContent = `登入失敗: ${error.message}`;
-                authError.classList.remove('hidden');
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-white"></i> 登入系統`;
-            }
-        });
-
-        // Logout Handler
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => showToast("已安全登出"));
-        });
-
-        // Load Tracking Data
-        function loadTrackingData() {
-            const trackingRef = ref(db, 'iiot_tracking_data');
-            onValue(trackingRef, (snapshot) => {
-                const val = snapshot.val();
-                if (val && val.items) {
-                    trackingData = val.items;
-                    if (val.lastUpdated) {
-                        lastSavedTime.textContent = val.lastUpdated;
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userInfo').classList.add('flex');
+                document.getElementById('userEmailDisplay').textContent = user.email;
+                updateConnectionStatus(true);
+                
+                // 開始即時監聽 Database
+                const dataRef = ref(db, 'project_tracking_data');
+                onValue(dataRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && Array.isArray(data)) {
+                        window.currentData = data;
+                    } else if (data && typeof data === 'object') {
+                        window.currentData = Object.values(data);
+                    } else {
+                        // 預設給予 12 筆課別預設資料
+                        window.currentData = DEPARTMENTS.map((dept, idx) => createEmptyRow(idx + 1, dept));
                     }
-                } else {
-                    trackingData = [];
-                }
-                renderTable();
-                updateChartsAndKPIs();
-            });
-        }
-
-        // Save Data to Firebase Realtime Database
-        async function saveDataToFirebase() {
-            if (!currentUser) return;
-            const now = new Date().toLocaleString('zh-TW', { hour12: false });
-            try {
-                const trackingRef = ref(db, 'iiot_tracking_data');
-                await set(trackingRef, {
-                    items: trackingData,
-                    lastUpdated: now,
-                    updatedBy: currentUser.email
+                    renderTable();
+                    renderCharts();
+                    updateSavedTime();
+                }, (error) => {
+                    console.error("Firebase 讀取錯誤:", error);
+                    updateConnectionStatus(false);
                 });
-                lastSavedTime.textContent = now;
-                showToast("數據已即時同步存檔！");
+
+            } else {
+                document.getElementById('loginModal').classList.remove('hidden');
+                document.getElementById('userInfo').classList.add('hidden');
+                updateConnectionStatus(false);
+            }
+        });
+
+        // 登入處理
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errDiv = document.getElementById('loginError');
+            errDiv.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
             } catch (err) {
-                showToast("同步失敗：" + err.message, true);
+                errDiv.textContent = "登入失敗：" + err.message;
+                errDiv.classList.remove('hidden');
+            }
+        });
+
+        // 登出處理
+        window.handleLogout = () => {
+            signOut(auth);
+        };
+
+        function updateConnectionStatus(isConnected) {
+            const statusEl = document.getElementById('connectionStatus');
+            if (isConnected) {
+                statusEl.className = "inline-flex items-center text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-black font-black";
+                statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>已即時連線`;
+            } else {
+                statusEl.className = "inline-flex items-center text-red-800 bg-red-100 px-2 py-0.5 rounded border border-black font-black";
+                statusEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></span>已離線`;
             }
         }
 
-        // Helper: Progress Percent Calculator
-        function calcProgress(completed, total) {
-            const comp = parseFloat(completed) || 0;
-            const tot = parseFloat(total) || 0;
-            if (tot <= 0) return 0;
-            const pct = (comp / tot) * 100;
-            return Math.min(Math.max(pct, 0), 100);
+        function updateSavedTime() {
+            const now = new Date();
+            document.getElementById('lastSavedTime').textContent = now.toLocaleString('zh-TW', { hour12: false });
         }
 
-        // Visual Progress Bar Element Generator
-        function createProgressBarHTML(percentage) {
-            const pct = percentage.toFixed(1);
-            let colorClass = "bg-red-500";
-            if (percentage >= 100) colorClass = "bg-brand-emerald";
-            else if (percentage >= 50) colorClass = "bg-brand-blue";
-            else if (percentage > 0) colorClass = "bg-brand-amber";
-
-            return `
-                <div class="w-full flex items-center gap-2">
-                    <div class="flex-1 bg-cream-300 rounded-full h-3 overflow-hidden border border-black">
-                        <div class="h-full ${colorClass} transition-all duration-300" style="width: ${percentage}%"></div>
-                    </div>
-                    <span class="text-xs font-black text-black w-12 text-right">${pct}%</span>
-                </div>
-            `;
+        function createEmptyRow(id, dept = "A1金一") {
+            return {
+                id: id,
+                department: dept,
+                machineTotal: 0,
+                signalTotal: 0,
+                signalDone: 0,
+                iiotTotal: 0,
+                iiotDone: 0,
+                netTotal: 0,
+                netDone: 0,
+                wifiTotal: 0,
+                wifiDone: 0,
+                tabletTotal: 0,
+                tabletDone: 0,
+                note: ""
+            };
         }
 
-        // --- Chart.js Analytics Implementation ---
+        // 渲染表格
+        window.renderTable = function() {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
 
-        function initCharts() {
-            // Chart 1: Department Bar Chart
-            const ctx1 = document.getElementById('deptBarChart').getContext('2d');
-            deptBarChartInstance = new Chart(ctx1, {
+            window.currentData.forEach((row, index) => {
+                // 安全數值解析
+                const parseNum = (val) => {
+                    const n = parseFloat(val);
+                    return isNaN(n) ? 0 : n;
+                };
+
+                const machineTotal = parseNum(row.machineTotal);
+                const signalTotal = parseNum(row.signalTotal);
+                const signalDone = parseNum(row.signalDone);
+                const iiotTotal = parseNum(row.iiotTotal);
+                const iiotDone = parseNum(row.iiotDone);
+                const netTotal = parseNum(row.netTotal);
+                const netDone = parseNum(row.netDone);
+                const wifiTotal = parseNum(row.wifiTotal);
+                const wifiDone = parseNum(row.wifiDone);
+                const tabletTotal = parseNum(row.tabletTotal);
+                const tabletDone = parseNum(row.tabletDone);
+
+                // 計算百分比
+                const calcProgress = (done, total) => total > 0 ? Math.min(100, Math.max(0, (done / total) * 100)) : 0;
+                
+                const signalProgress = calcProgress(signalDone, signalTotal);
+                const iiotProgress = calcProgress(iiotDone, iiotTotal);
+                const netProgress = calcProgress(netDone, netTotal);
+                const wifiProgress = calcProgress(wifiDone, wifiTotal);
+                const tabletProgress = calcProgress(tabletDone, tabletTotal);
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-black hover:bg-amber-50/50 text-center text-xs font-black";
+
+                // 下拉選單 HTML
+                const deptOptions = DEPARTMENTS.map(d => 
+                    `<option value="${d}" ${row.department === d ? 'selected' : ''}>${d}</option>`
+                ).join('');
+
+                tr.innerHTML = `
+                    <td class="p-1 border-r border-black">
+                        <button onclick="deleteRow(${index})" class="text-red-600 hover:text-red-800 p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                    <td class="p-1 border-r border-black">${index + 1}</td>
+                    <td class="p-1 border-r border-black">
+                        <select onchange="updateRowValue(${index}, 'department', this.value)" class="table-input font-black bg-cream">
+                            ${deptOptions}
+                        </select>
+                    </td>
+                    <td class="p-1 border-r border-black bg-amber-50">
+                        <input type="number" min="0" value="${machineTotal}" onchange="updateRowValue(${index}, 'machineTotal', this.value)" class="table-input text-right">
+                    </td>
+                    
+                    <!-- 三色燈 -->
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${signalTotal}" onchange="updateRowValue(${index}, 'signalTotal', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${signalDone}" onchange="updateRowValue(${index}, 'signalDone', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black bg-orange-50/60 px-2">
+                        <div class="font-black text-black text-right mb-0.5">${signalProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                            <div class="bg-orange-500 h-full" style="width: ${signalProgress}%"></div>
+                        </div>
+                    </td>
+
+                    <!-- 機聯網 -->
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${iiotTotal}" onchange="updateRowValue(${index}, 'iiotTotal', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${iiotDone}" onchange="updateRowValue(${index}, 'iiotDone', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black bg-blue-50/60 px-2">
+                        <div class="font-black text-black text-right mb-0.5">${iiotProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                            <div class="bg-blue-500 h-full" style="width: ${iiotProgress}%"></div>
+                        </div>
+                    </td>
+
+                    <!-- 網路設備 -->
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${netTotal}" onchange="updateRowValue(${index}, 'netTotal', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${netDone}" onchange="updateRowValue(${index}, 'netDone', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black bg-emerald-50/60 px-2">
+                        <div class="font-black text-black text-right mb-0.5">${netProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                            <div class="bg-emerald-500 h-full" style="width: ${netProgress}%"></div>
+                        </div>
+                    </td>
+
+                    <!-- WIFI -->
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${wifiTotal}" onchange="updateRowValue(${index}, 'wifiTotal', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${wifiDone}" onchange="updateRowValue(${index}, 'wifiDone', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black bg-teal-50/60 px-2">
+                        <div class="font-black text-black text-right mb-0.5">${wifiProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                            <div class="bg-teal-500 h-full" style="width: ${wifiProgress}%"></div>
+                        </div>
+                    </td>
+
+                    <!-- 平板設備 -->
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${tabletTotal}" onchange="updateRowValue(${index}, 'tabletTotal', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black">
+                        <input type="number" min="0" value="${tabletDone}" onchange="updateRowValue(${index}, 'tabletDone', this.value)" class="table-input text-right">
+                    </td>
+                    <td class="p-1 border-r border-black bg-purple-50/60 px-2">
+                        <div class="font-black text-black text-right mb-0.5">${tabletProgress.toFixed(1)}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 border border-black overflow-hidden">
+                            <div class="bg-purple-500 h-full" style="width: ${tabletProgress}%"></div>
+                        </div>
+                    </td>
+
+                    <!-- 備註 -->
+                    <td class="p-1 border-black">
+                        <input type="text" value="${row.note || ''}" onchange="updateRowValue(${index}, 'note', this.value)" class="table-input text-left" placeholder="輸入備註...">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        // 修改欄位數據與自動儲存
+        window.updateRowValue = function(index, field, value) {
+            if (field === 'department' || field === 'note') {
+                window.currentData[index][field] = value;
+            } else {
+                window.currentData[index][field] = parseFloat(value) || 0;
+            }
+            renderTable();
+            renderCharts();
+            saveAllDataToFirebase();
+        };
+
+        // 新增列
+        window.addNewRow = function() {
+            const newId = window.currentData.length + 1;
+            window.currentData.push(createEmptyRow(newId));
+            renderTable();
+            renderCharts();
+            saveAllDataToFirebase();
+        };
+
+        // 刪除列
+        window.deleteRow = function(index) {
+            if (confirm(`確定要刪除第 ${index + 1} 列資料嗎？`)) {
+                window.currentData.splice(index, 1);
+                // 重新編號
+                window.currentData.forEach((row, i) => row.id = i + 1);
+                renderTable();
+                renderCharts();
+                saveAllDataToFirebase();
+            }
+        };
+
+        // 儲存至 Firebase Realtime Database
+        window.saveAllDataToFirebase = function() {
+            set(ref(db, 'project_tracking_data'), window.currentData)
+                .then(() => {
+                    updateSavedTime();
+                })
+                .catch((err) => {
+                    alert("儲存至 Firebase 失敗: " + err.message);
+                });
+        };
+
+        // 切換 Tab 分頁
+        window.switchTab = function(tab) {
+            const dataView = document.getElementById('tabDataView');
+            const chartView = document.getElementById('tabChartView');
+            const btnData = document.getElementById('tabBtnData');
+            const btnChart = document.getElementById('tabBtnChart');
+
+            if (tab === 'data') {
+                dataView.classList.remove('hidden');
+                chartView.classList.add('hidden');
+                btnData.classList.add('active');
+                btnChart.classList.remove('active');
+            } else if (tab === 'chart') {
+                dataView.classList.add('hidden');
+                chartView.classList.remove('hidden');
+                btnChart.classList.add('active');
+                btnData.classList.remove('active');
+                // 重新渲染圖表以確保尺寸調整
+                renderCharts();
+            }
+        };
+
+        // 渲染分析圖表與 KPI
+        window.renderCharts = function() {
+            if (!window.currentData) return;
+
+            let totalSignalT = 0, totalSignalD = 0;
+            let totalIiotT = 0, totalIiotD = 0;
+            let totalNetT = 0, totalNetD = 0;
+            let totalWifiT = 0, totalWifiD = 0;
+            let totalTabT = 0, totalTabD = 0;
+
+            const deptLabels = [];
+            const deptIiotTotals = [];
+            const deptIiotDones = [];
+
+            window.currentData.forEach(row => {
+                const parseNum = (val) => isNaN(parseFloat(val)) ? 0 : parseFloat(val);
+
+                totalSignalT += parseNum(row.signalTotal);
+                totalSignalD += parseNum(row.signalDone);
+                totalIiotT += parseNum(row.iiotTotal);
+                totalIiotD += parseNum(row.iiotDone);
+                totalNetT += parseNum(row.netTotal);
+                totalNetD += parseNum(row.netDone);
+                totalWifiT += parseNum(row.wifiTotal);
+                totalWifiD += parseNum(row.wifiDone);
+                totalTabT += parseNum(row.tabletTotal);
+                totalTabD += parseNum(row.tabletDone);
+
+                deptLabels.push(row.department || "未指定");
+                deptIiotTotals.push(parseNum(row.iiotTotal));
+                deptIiotDones.push(parseNum(row.iiotDone));
+            });
+
+            // 更新 KPI 卡片
+            const updateKpi = (idPrefix, done, total) => {
+                const pct = total > 0 ? ((done / total) * 100).toFixed(1) : "0.0";
+                document.getElementById(`kpi${idPrefix}Progress`).textContent = `${pct}%`;
+                document.getElementById(`kpi${idPrefix}Bar`).style.width = `${Math.min(100, pct)}%`;
+                document.getElementById(`kpi${idPrefix}Detail`).textContent = `${done} / ${total} 完成`;
+            };
+
+            updateKpi('Signal', totalSignalD, totalSignalT);
+            updateKpi('Iiot', totalIiotD, totalIiotT);
+            updateKpi('Network', totalNetD, totalNetT);
+            updateKpi('Wifi', totalWifiD, totalWifiT);
+            updateKpi('Tablet', totalTabD, totalTabT);
+
+            // 1. 各課別長條圖
+            const ctxDept = document.getElementById('departmentChart').getContext('2d');
+            if (window.deptChartInstance) window.deptChartInstance.destroy();
+
+            window.deptChartInstance = new Chart(ctxDept, {
                 type: 'bar',
                 data: {
-                    labels: [],
+                    labels: deptLabels,
                     datasets: [
                         {
                             label: '機聯網總數',
-                            data: [],
-                            backgroundColor: '#0284C7',
+                            data: deptIiotTotals,
+                            backgroundColor: '#0088FF',
                             borderColor: '#000000',
-                            borderWidth: 2,
-                            borderRadius: 6
+                            borderWidth: 2
                         },
                         {
                             label: '機聯網完成數',
-                            data: [],
-                            backgroundColor: '#059669',
+                            data: deptIiotDones,
+                            backgroundColor: '#10B981',
                             borderColor: '#000000',
-                            borderWidth: 2,
-                            borderRadius: 6
+                            borderWidth: 2
                         }
                     ]
                 },
@@ -633,42 +725,34 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            labels: {
-                                font: { weight: 'bold', size: 12 },
-                                color: '#000000'
-                            }
-                        }
+                        legend: { labels: { font: { weight: 'bold', family: 'Noto Sans TC' }, color: '#000' } }
                     },
                     scales: {
-                        x: {
-                            ticks: { font: { weight: 'bold' }, color: '#000000' },
-                            grid: { color: '#E5DDCF' }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { font: { weight: 'bold' }, color: '#000000' },
-                            grid: { color: '#E5DDCF' }
-                        }
+                        x: { ticks: { font: { weight: 'bold' }, color: '#000' } },
+                        y: { ticks: { font: { weight: 'bold' }, color: '#000' }, beginAtZero: true }
                     }
                 }
             });
 
-            // Chart 2: Overall Modules Doughnut Chart
-            const ctx2 = document.getElementById('overallDoughnutChart').getContext('2d');
-            overallDoughnutChartInstance = new Chart(ctx2, {
+            // 2. 總體完成率環狀圖
+            const ctxOverall = document.getElementById('overallChart').getContext('2d');
+            if (window.overallChartInstance) window.overallChartInstance.destroy();
+
+            const getRate = (d, t) => t > 0 ? ((d / t) * 100).toFixed(1) : 0;
+
+            window.overallChartInstance = new Chart(ctxOverall, {
                 type: 'doughnut',
                 data: {
                     labels: ['三色燈模組', '機聯網進度', '網路設備', 'WIFI佈建', '平板設備'],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#FF5722',
-                            '#0284C7',
-                            '#059669',
-                            '#D97706',
-                            '#7C3AED'
+                        data: [
+                            getRate(totalSignalD, totalSignalT),
+                            getRate(totalIiotD, totalIiotT),
+                            getRate(totalNetD, totalNetT),
+                            getRate(totalWifiD, totalWifiT),
+                            getRate(totalTabD, totalTabT)
                         ],
+                        backgroundColor: ['#FF5722', '#0088FF', '#10B981', '#F59E0B', '#8B5CF6'],
                         borderColor: '#000000',
                         borderWidth: 2
                     }]
@@ -677,416 +761,150 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: { weight: 'bold', size: 11 },
-                                color: '#000000'
-                            }
-                        }
+                        legend: { position: 'bottom', labels: { font: { weight: 'bold', family: 'Noto Sans TC' }, color: '#000' } }
                     }
                 }
             });
-        }
+        };
 
-        function updateChartsAndKPIs() {
-            if (!deptBarChartInstance || !overallDoughnutChartInstance) return;
-
-            // Aggregation Variables
-            let lightTot = 0, lightDone = 0;
-            let iiotTot = 0, iiotDone = 0;
-            let netTot = 0, netDone = 0;
-            let wifiTot = 0, wifiDone = 0;
-            let padTot = 0, padDone = 0;
-
-            const deptMap = {};
-
-            trackingData.forEach(row => {
-                const lT = Number(row.lightTotal || 0);
-                const lD = Number(row.lightDone || 0);
-                const iT = Number(row.iiotTotal || 0);
-                const iD = Number(row.iiotDone || 0);
-                const nT = Number(row.netTotal || 0);
-                const nD = Number(row.netDone || 0);
-                const wT = Number(row.wifiTotal || 0);
-                const wD = Number(row.wifiDone || 0);
-                const pT = Number(row.padTotal || 0);
-                const pD = Number(row.padDone || 0);
-
-                lightTot += lT; lightDone += lD;
-                iiotTot += iT;  iiotDone += iD;
-                netTot += nT;   netDone += nD;
-                wifiTot += wT;  wifiDone += wD;
-                padTot += pT;   padDone += pD;
-
-                // Department level aggregation
-                const dept = row.dept || "未指定";
-                if (!deptMap[dept]) {
-                    deptMap[dept] = { iiotTotal: 0, iiotDone: 0 };
-                }
-                deptMap[dept].iiotTotal += iT;
-                deptMap[dept].iiotDone += iD;
-            });
-
-            // Update KPI Cards
-            const lightPct = calcProgress(lightDone, lightTot);
-            const iiotPct = calcProgress(iiotDone, iiotTot);
-            const netPct = calcProgress(netDone, netTot);
-            const wifiPct = calcProgress(wifiDone, wifiTot);
-            const padPct = calcProgress(padDone, padTot);
-
-            document.getElementById('kpiLightPct').textContent = `${lightPct.toFixed(1)}%`;
-            document.getElementById('kpiLightBar').style.width = `${lightPct}%`;
-            document.getElementById('kpiLightRatio').textContent = `${lightDone} / ${lightTot} 完成`;
-
-            document.getElementById('kpiIiotPct').textContent = `${iiotPct.toFixed(1)}%`;
-            document.getElementById('kpiIiotBar').style.width = `${iiotPct}%`;
-            document.getElementById('kpiIiotRatio').textContent = `${iiotDone} / ${iiotTot} 完成`;
-
-            document.getElementById('kpiNetPct').textContent = `${netPct.toFixed(1)}%`;
-            document.getElementById('kpiNetBar').style.width = `${netPct}%`;
-            document.getElementById('kpiNetRatio').textContent = `${netDone} / ${netTot} 完成`;
-
-            document.getElementById('kpiWifiPct').textContent = `${wifiPct.toFixed(1)}%`;
-            document.getElementById('kpiWifiBar').style.width = `${wifiPct}%`;
-            document.getElementById('kpiWifiRatio').textContent = `${wifiDone} / ${wifiTot} 完成`;
-
-            document.getElementById('kpiPadPct').textContent = `${padPct.toFixed(1)}%`;
-            document.getElementById('kpiPadBar').style.width = `${padPct}%`;
-            document.getElementById('kpiPadRatio').textContent = `${padDone} / ${padTot} 完成`;
-
-            // Update Department Bar Chart
-            const deptLabels = Object.keys(deptMap);
-            const deptTotals = deptLabels.map(d => deptMap[d].iiotTotal);
-            const deptDones = deptLabels.map(d => deptMap[d].iiotDone);
-
-            deptBarChartInstance.data.labels = deptLabels;
-            deptBarChartInstance.data.datasets[0].data = deptTotals;
-            deptBarChartInstance.data.datasets[1].data = deptDones;
-            deptBarChartInstance.update();
-
-            // Update Overall Doughnut Chart
-            overallDoughnutChartInstance.data.datasets[0].data = [
-                lightPct.toFixed(1),
-                iiotPct.toFixed(1),
-                netPct.toFixed(1),
-                wifiPct.toFixed(1),
-                padPct.toFixed(1)
-            ];
-            overallDoughnutChartInstance.update();
-        }
-
-        // --- Render Table Function ---
-
-        function renderTable() {
-            tableBody.innerHTML = "";
-            totalCount.textContent = trackingData.length;
-
-            if (trackingData.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            trackingData.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-cream-200/60 transition-colors divide-x-2 divide-black";
-
-                const lightPct = calcProgress(row.lightDone, row.lightTotal);
-                const iiotPct = calcProgress(row.iiotDone, row.iiotTotal);
-                const netPct = calcProgress(row.netDone, row.netTotal);
-                const wifiPct = calcProgress(row.wifiDone, row.wifiTotal);
-                const padPct = calcProgress(row.padDone, row.padTotal);
-
-                tr.innerHTML = `
-                    <td class="p-2 text-center sticky-col">
-                        <button class="delete-btn text-black hover:text-red-600 p-1.5 rounded transition" data-index="${index}" title="刪除此列">
-                            <i class="fa-regular fa-trash-can text-base"></i>
-                        </button>
-                    </td>
-
-                    <!-- 1. 編號 -->
-                    <td class="p-2 text-center font-black text-black">${row.id || (index + 1)}</td>
-
-                    <!-- 2. 課別 下拉選單 -->
-                    <td class="p-2">
-                        <select class="dept-select w-full p-1.5 border-2 border-black rounded-lg bg-white focus:ring-2 focus:ring-brand-orange font-black text-black" data-index="${index}">
-                            ${DEPARTMENTS.map(dept => `<option value="${dept}" ${row.dept === dept ? 'selected' : ''}>${dept}</option>`).join('')}
-                        </select>
-                    </td>
-
-                    <!-- 3. 機台總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.machineTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="machineTotal" data-index="${index}"></td>
-
-                    <!-- 4. 三色燈模組總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.lightTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="lightTotal" data-index="${index}"></td>
-
-                    <!-- 5. 三色燈模組完成數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.lightDone ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="lightDone" data-index="${index}"></td>
-
-                    <!-- 6. 三色燈模組進度 -->
-                    <td class="p-2 bg-cream-100">${createProgressBarHTML(lightPct)}</td>
-
-                    <!-- 7. 機聯網總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.iiotTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="iiotTotal" data-index="${index}"></td>
-
-                    <!-- 8. 機聯網完成數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.iiotDone ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="iiotDone" data-index="${index}"></td>
-
-                    <!-- 9. 機聯網進度 -->
-                    <td class="p-2 bg-cream-100">${createProgressBarHTML(iiotPct)}</td>
-
-                    <!-- 10. 網路設備總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.netTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="netTotal" data-index="${index}"></td>
-
-                    <!-- 11. 網路設備完成數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.netDone ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="netDone" data-index="${index}"></td>
-
-                    <!-- 12. 網路設備進度 -->
-                    <td class="p-2 bg-cream-100">${createProgressBarHTML(netPct)}</td>
-
-                    <!-- 13. WIFI總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.wifiTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="wifiTotal" data-index="${index}"></td>
-
-                    <!-- 14. WIFI完成數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.wifiDone ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="wifiDone" data-index="${index}"></td>
-
-                    <!-- 15. WIFI進度 -->
-                    <td class="p-2 bg-cream-100">${createProgressBarHTML(wifiPct)}</td>
-
-                    <!-- 16. 平板設備總數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.padTotal ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="padTotal" data-index="${index}"></td>
-
-                    <!-- 17. 平板設備使用數 -->
-                    <td class="p-2"><input type="number" min="0" value="${row.padDone ?? 0}" class="num-input w-20 text-right p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-field="padDone" data-index="${index}"></td>
-
-                    <!-- 18. 平板設備使用進度 -->
-                    <td class="p-2 bg-cream-100">${createProgressBarHTML(padPct)}</td>
-
-                    <!-- 19. 備註 -->
-                    <td class="p-2">
-                        <input type="text" value="${row.note || ''}" class="note-input w-full p-1.5 border-2 border-black rounded-lg bg-white font-black text-black" data-index="${index}" placeholder="輸入備註說明...">
-                    </td>
-                `;
-
-                tableBody.appendChild(tr);
-            });
-
-            bindTableEvents();
-        }
-
-        // Event Binding
-        function bindTableEvents() {
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const idx = e.currentTarget.dataset.index;
-                    trackingData.splice(idx, 1);
-                    trackingData.forEach((item, i) => item.id = i + 1);
-                    renderTable();
-                    updateChartsAndKPIs();
-                });
-            });
-
-            document.querySelectorAll('.dept-select').forEach(select => {
-                select.addEventListener('change', (e) => {
-                    const idx = e.target.dataset.index;
-                    trackingData[idx].dept = e.target.value;
-                    updateChartsAndKPIs();
-                });
-            });
-
-            document.querySelectorAll('.num-input').forEach(input => {
-                input.addEventListener('input', (e) => {
-                    const idx = e.target.dataset.index;
-                    const field = e.target.dataset.field;
-                    const val = parseFloat(e.target.value) || 0;
-                    trackingData[idx][field] = val;
-                    renderTable();
-                    updateChartsAndKPIs();
-                });
-            });
-
-            document.querySelectorAll('.note-input').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const idx = e.target.dataset.index;
-                    trackingData[idx].note = e.target.value;
-                });
-            });
-        }
-
-        // Add Row Handler
-        addRowBtn.addEventListener('click', () => {
-            const newRow = {
-                id: trackingData.length + 1,
-                dept: DEPARTMENTS[0],
-                machineTotal: 0,
-                lightTotal: 0,
-                lightDone: 0,
-                iiotTotal: 0,
-                iiotDone: 0,
-                netTotal: 0,
-                netDone: 0,
-                wifiTotal: 0,
-                wifiDone: 0,
-                padTotal: 0,
-                padDone: 0,
-                note: ""
-            };
-            trackingData.push(newRow);
-            renderTable();
-            updateChartsAndKPIs();
-        });
-
-        // Save All Button
-        saveAllBtn.addEventListener('click', () => {
-            saveDataToFirebase();
-        });
-
-        // --- SheetJS Excel Import / Export (強制 type: 'n' 數值處理) ---
-
-        exportExcelBtn.addEventListener('click', () => {
-            if (trackingData.length === 0) {
-                showToast("無資料可匯出！", true);
+        // 強制數值型態匯出至 Excel
+        window.exportToExcel = function() {
+            if (!window.currentData || window.currentData.length === 0) {
+                alert("目前沒有資料可匯出！");
                 return;
             }
 
-            // Headers strictly defined
-            const excelHeader = [
-                "編號", "課別", "機台總數", 
-                "三色燈模組總數", "三色燈模組完成數", "三色燈模組進度",
-                "機聯網總數", "機聯網完成數", "機聯網進度",
-                "網路設備總數", "網路設備完成數", "網路設備進度",
-                "WIFI總數", "WIFI完成數", "WIFI進度",
-                "平板設備總數", "平板設備使用數", "平板設備使用進度",
-                "備註"
-            ];
+            const excelRows = window.currentData.map((row, idx) => {
+                const parseNum = (val) => isNaN(parseFloat(val)) ? 0 : parseFloat(val);
 
-            // Map data force numeric type 'n'
-            const rows = trackingData.map((item, index) => [
-                { v: Number(item.id || index + 1), t: 'n' },
-                { v: String(item.dept || ''), t: 's' },
-                { v: Number(item.machineTotal || 0), t: 'n' },
-                { v: Number(item.lightTotal || 0), t: 'n' },
-                { v: Number(item.lightDone || 0), t: 'n' },
-                { v: (calcProgress(item.lightDone, item.lightTotal) / 100), t: 'n', z: '0.0%' },
-                { v: Number(item.iiotTotal || 0), t: 'n' },
-                { v: Number(item.iiotDone || 0), t: 'n' },
-                { v: (calcProgress(item.iiotDone, item.iiotTotal) / 100), t: 'n', z: '0.0%' },
-                { v: Number(item.netTotal || 0), t: 'n' },
-                { v: Number(item.netDone || 0), t: 'n' },
-                { v: (calcProgress(item.netDone, item.netTotal) / 100), t: 'n', z: '0.0%' },
-                { v: Number(item.wifiTotal || 0), t: 'n' },
-                { v: Number(item.wifiDone || 0), t: 'n' },
-                { v: (calcProgress(item.wifiDone, item.wifiTotal) / 100), t: 'n', z: '0.0%' },
-                { v: Number(item.padTotal || 0), t: 'n' },
-                { v: Number(item.padDone || 0), t: 'n' },
-                { v: (calcProgress(item.padDone, item.padTotal) / 100), t: 'n', z: '0.0%' },
-                { v: String(item.note || ''), t: 's' }
-            ]);
+                const signalTotal = parseNum(row.signalTotal);
+                const signalDone = parseNum(row.signalDone);
+                const iiotTotal = parseNum(row.iiotTotal);
+                const iiotDone = parseNum(row.iiotDone);
+                const netTotal = parseNum(row.netTotal);
+                const netDone = parseNum(row.netDone);
+                const wifiTotal = parseNum(row.wifiTotal);
+                const wifiDone = parseNum(row.wifiDone);
+                const tabletTotal = parseNum(row.tabletTotal);
+                const tabletDone = parseNum(row.tabletDone);
 
-            const ws = XLSX.utils.aoa_to_sheet([excelHeader]);
+                return {
+                    "編號": idx + 1,
+                    "課別": row.department || "A1金一",
+                    "機台總數": { v: parseNum(row.machineTotal), t: 'n' },
+                    "三色燈模組總數": { v: signalTotal, t: 'n' },
+                    "三色燈模組完成數": { v: signalDone, t: 'n' },
+                    "三色燈模組進度": { v: signalTotal > 0 ? (signalDone / signalTotal) : 0, t: 'n', z: '0.0%' },
+                    "機聯網總數": { v: iiotTotal, t: 'n' },
+                    "機聯網完成數": { v: iiotDone, t: 'n' },
+                    "機聯網進度": { v: iiotTotal > 0 ? (iiotDone / iiotTotal) : 0, t: 'n', z: '0.0%' },
+                    "網路設備總數": { v: netTotal, t: 'n' },
+                    "網路設備完成數": { v: netDone, t: 'n' },
+                    "網路設備進度": { v: netTotal > 0 ? (netDone / netTotal) : 0, t: 'n', z: '0.0%' },
+                    "WIFI總數": { v: wifiTotal, t: 'n' },
+                    "WIFI完成數": { v: wifiDone, t: 'n' },
+                    "WIFI進度": { v: wifiTotal > 0 ? (wifiDone / wifiTotal) : 0, t: 'n', z: '0.0%' },
+                    "平板設備總數": { v: tabletTotal, t: 'n' },
+                    "平板設備使用數": { v: tabletDone, t: 'n' },
+                    "平板設備使用進度": { v: tabletTotal > 0 ? (tabletDone / tabletTotal) : 0, t: 'n', z: '0.0%' },
+                    "備註": row.note || ""
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(excelRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "機聯網進度追蹤");
             
-            rows.forEach((row, rIdx) => {
-                row.forEach((cell, cIdx) => {
-                    const cellAddress = XLSX.utils.encode_cell({ r: rIdx + 1, c: cIdx });
-                    ws[cellAddress] = cell;
-                });
-            });
+            XLSX.writeFile(workbook, `機聯網專案進度追蹤表_${new Date().toISOString().slice(0,10)}.xlsx`);
+        };
 
-            const refRange = XLSX.utils.encode_range({ r: 0, c: 0 }, { r: rows.length, c: excelHeader.length - 1 });
-            ws['!ref'] = refRange;
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "機聯網進度追蹤");
-
-            XLSX.writeFile(wb, `機聯網進度追蹤_企業分析版_${new Date().toISOString().slice(0, 10)}.xlsx`);
-            showToast("Excel 檔（強制數值格式）已順利匯出！");
-        });
-
-        importExcelBtn.addEventListener('click', () => excelInput.click());
-
-        excelInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
+        // Excel 匯入
+        window.importFromExcel = function(event) {
+            const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = function(e) {
                 try {
-                    const data = new Uint8Array(event.target.result);
+                    const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
-                    const jsonRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                    if (jsonRows.length <= 1) {
-                        showToast("檔案中沒有發現可匯入的有效資料！", true);
+                    if (jsonData.length === 0) {
+                        alert("Excel 檔案內無有效數據！");
                         return;
                     }
 
-                    const imported = [];
-                    for (let i = 1; i < jsonRows.length; i++) {
-                        const row = jsonRows[i];
-                        if (!row || row.length === 0) continue;
+                    const importedData = jsonData.map((row, idx) => {
+                        const parseNum = (val) => {
+                            const n = parseFloat(val);
+                            return isNaN(n) ? 0 : n;
+                        };
 
-                        imported.push({
-                            id: i,
-                            dept: DEPARTMENTS.includes(row[1]) ? row[1] : DEPARTMENTS[0],
-                            machineTotal: Number(row[2]) || 0,
-                            lightTotal: Number(row[3]) || 0,
-                            lightDone: Number(row[4]) || 0,
-                            iiotTotal: Number(row[6]) || 0,
-                            iiotDone: Number(row[7]) || 0,
-                            netTotal: Number(row[9]) || 0,
-                            netDone: Number(row[10]) || 0,
-                            wifiTotal: Number(row[12]) || 0,
-                            wifiDone: Number(row[13]) || 0,
-                            padTotal: Number(row[15]) || 0,
-                            padDone: Number(row[16]) || 0,
-                            note: row[18] ? String(row[18]) : ""
-                        });
-                    }
+                        return {
+                            id: idx + 1,
+                            department: DEPARTMENTS.includes(row["課別"]) ? row["課別"] : "A1金一",
+                            machineTotal: parseNum(row["機台總數"]),
+                            signalTotal: parseNum(row["三色燈模組總數"]),
+                            signalDone: parseNum(row["三色燈模組完成數"]),
+                            iiotTotal: parseNum(row["機聯網總數"]),
+                            iiotDone: parseNum(row["機聯網完成數"]),
+                            netTotal: parseNum(row["網路設備總數"]),
+                            netDone: parseNum(row["網路設備完成數"]),
+                            wifiTotal: parseNum(row["WIFI總數"]),
+                            wifiDone: parseNum(row["WIFI完成數"]),
+                            tabletTotal: parseNum(row["平板設備總數"]),
+                            tabletDone: parseNum(row["平板設備使用數"]),
+                            note: row["備註"] || ""
+                        };
+                    });
 
-                    trackingData = imported;
+                    window.currentData = importedData;
                     renderTable();
-                    updateChartsAndKPIs();
-                    saveDataToFirebase();
-                    showToast(`成功匯入 ${imported.length} 筆資料，即時同步儲存！`);
+                    renderCharts();
+                    saveAllDataToFirebase();
+                    alert("Excel 資料匯入成功！已同步儲存。");
+
                 } catch (err) {
-                    showToast("匯入 Excel 失敗: " + err.message, true);
-                } finally {
-                    excelInput.value = "";
+                    alert("匯入失敗，請確認檔案格式是否正確：" + err.message);
                 }
             };
             reader.readAsArrayBuffer(file);
-        });
+            event.target.value = ""; 
+        };
 
-        // --- Full Screen / PNG Export (Contains Charts + Table) ---
+        // 一鍵匯出 PNG
+        window.exportToPNG = function() {
+            const container = document.getElementById('exportContainer');
+            
+            // 暫時解除隱藏分頁以確保完整繪製
+            const dataView = document.getElementById('tabDataView');
+            const chartView = document.getElementById('tabChartView');
+            const dataHidden = dataView.classList.contains('hidden');
+            const chartHidden = chartView.classList.contains('hidden');
 
-        exportPngBtn.addEventListener('click', () => {
-            const mainMain = document.querySelector('main');
-            showToast("正在渲染全頁高畫質 PNG，請稍候...");
+            dataView.classList.remove('hidden');
+            chartView.classList.remove('hidden');
 
-            html2canvas(mainMain, {
+            html2canvas(container, {
                 scale: 2,
-                useCORS: true,
-                backgroundColor: "#FBF9F5"
+                backgroundColor: "#FBF9F5",
+                useCORS: true
             }).then(canvas => {
+                // 還原原本分頁顯示狀態
+                if (dataHidden) dataView.classList.add('hidden');
+                if (chartHidden) chartView.classList.add('hidden');
+
                 const link = document.createElement('a');
-                link.download = `機聯網全廠專案圖表分析報表_${new Date().toISOString().slice(0, 10)}.png`;
-                link.href = canvas.toDataURL("image/png");
+                link.download = `機聯網專案進度追蹤看板_${new Date().toISOString().slice(0,10)}.png`;
+                link.href = canvas.toDataURL('image/png');
                 link.click();
-                showToast("PNG 高清圖片已順利匯出！");
             }).catch(err => {
-                showToast("圖片匯出失敗：" + err.message, true);
+                alert("圖片匯出失敗：" + err.message);
             });
-        });
-
-        // Guide Modal Actions
-        guideBtn.addEventListener('click', () => guideModal.classList.remove('hidden'));
-        closeGuideBtn.addEventListener('click', () => guideModal.classList.add('hidden'));
-        confirmGuideBtn.addEventListener('click', () => guideModal.classList.add('hidden'));
-
+        };
     </script>
 </body>
 </html>
